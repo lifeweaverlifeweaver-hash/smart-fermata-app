@@ -3,60 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SmartFermata ERP & Booking</title>
+    <title>SmartFermata Business Pro</title>
     <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-database-compat.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --p: #10214a; --s: #27ae60; --bg: #f4f7f6; --accent: #f39c12; }
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); color: #333; }
+        :root { --p: #10214a; --s: #27ae60; --bg: #f8f9fa; --accent: #3498db; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); }
         
-        /* Sidebar & Navigation */
         .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: var(--p); transition: 0.3s; z-index: 1000; padding-top: 60px; color: white; }
         .sidebar.active { left: 0; }
-        .nav-item { padding: 18px 25px; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; }
-        .nav-item i { margin-right: 15px; width: 20px; color: var(--accent); }
+        .nav-item { padding: 18px 25px; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; }
+        .nav-item i { margin-right: 15px; color: var(--accent); }
 
-        .top-bar { background: var(--p); color: white; padding: 15px; display: flex; align-items: center; position: sticky; top: 0; z-index: 900; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
+        .top-bar { background: var(--p); color: white; padding: 15px; display: flex; align-items: center; position: sticky; top: 0; z-index: 900; }
+        .card { background: white; margin: 15px; padding: 20px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.08); position: relative; border-left: 5px solid var(--p); }
         
-        /* UI Components */
-        .card { background: white; margin: 15px; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); position: relative; }
-        .report-box { background: var(--p); color: white; padding: 20px; border-radius: 15px; text-align: center; margin: 15px; }
-        .btn-pay { background: var(--s); color: white; border: none; padding: 12px; border-radius: 8px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .btn-pay { background: var(--s); color: white; border: none; padding: 15px; border-radius: 10px; width: 100%; font-weight: bold; cursor: pointer; font-size: 16px; margin-top: 10px; }
+        .btn-admin { background: var(--p); color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer; }
         
-        #login-screen { position: fixed; inset: 0; background: var(--p); z-index: 5000; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
-        .btn-main { width: 80%; padding: 20px; margin: 10px; border: none; border-radius: 15px; font-weight: bold; cursor: pointer; font-size: 18px; }
-        
-        input, select { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; }
-        .badge { position: absolute; top: 15px; right: 15px; padding: 5px 10px; border-radius: 10px; font-size: 12px; color: white; }
+        input, select { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+        #login-screen { position: fixed; inset: 0; background: var(--p); z-index: 5000; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; }
+        .status-badge { position: absolute; top: 15px; right: 15px; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; }
     </style>
 </head>
 <body>
 
     <div id="login-screen">
-        <img src="logo.png" style="width: 120px; border-radius: 50%; background: white; padding: 5px; margin-bottom: 20px;">
-        <h1 style="color:white;">SmartFermata Pro</h1>
-        <button class="btn-main" style="background:white; color:var(--p);" onclick="entry('admin')">ВХОД СОБСТВЕНИК</button>
-        <button class="btn-main" style="background:var(--s); color:white;" onclick="entry('client')">ВХОД КЛИЕНТИ</button>
+        <img src="logo.png" onerror="this.src='https://cdn-icons-png.flaticon.com/512/616/616554.png'" style="width: 100px; margin-bottom: 20px; border-radius: 50%; background: white; padding: 10px;">
+        <h2>SmartFermata Business</h2>
+        <button onclick="entry('admin')" style="width:80%; padding:20px; margin:10px; border-radius:15px; border:none; font-weight:bold; background:white; color:var(--p);">СОБСТВЕНИК</button>
+        <button onclick="entry('client')" style="width:80%; padding:20px; margin:10px; border-radius:15px; border:none; font-weight:bold; background:var(--s); color:white;">КЛИЕНТИ</button>
     </div>
 
     <div class="sidebar" id="menu">
         <div id="m-admin">
-            <div class="nav-item" onclick="view('h')"><i class="fas fa-horse"></i> Управление на Коне</div>
-            <div class="nav-item" onclick="view('reports')"><i class="fas fa-chart-line"></i> Отчети и Доходи</div>
-            <div class="nav-item" onclick="view('vouchers')"><i class="fas fa-ticket-alt"></i> Ваучери за отстъпка</div>
-            <div class="nav-item" onclick="view('s')"><i class="fas fa-boxes"></i> Склад</div>
+            <div class="nav-item" onclick="view('reports')"><i class="fas fa-chart-bar"></i> Отчети и Доходи</div>
+            <div class="nav-item" onclick="view('horses')"><i class="fas fa-horse"></i> Регистър Коне</div>
+            <div class="nav-item" onclick="view('vouchers')"><i class="fas fa-ticket-alt"></i> Ваучери</div>
+            <div class="nav-item" onclick="view('stock')"><i class="fas fa-warehouse"></i> Склад и Персонал</div>
         </div>
         <div id="m-client" style="display:none">
-            <div class="nav-item" onclick="view('booking')"><i class="fas fa-calendar-plus"></i> Резервация на езда</div>
-            <div class="nav-item" onclick="view('my_vouchers')"><i class="fas fa-tag"></i> Моите отстъпки</div>
+            <div class="nav-item" onclick="view('booking')"><i class="fas fa-calendar-check"></i> Резервация на езда</div>
+            <div class="nav-item" onclick="view('promo')"><i class="fas fa-tag"></i> Моите отстъпки</div>
         </div>
-        <div class="nav-item" onclick="location.reload()" style="color:#ff7675; margin-top:30px;"><i class="fas fa-power-off"></i> Изход</div>
+        <div class="nav-item" onclick="location.reload()" style="color:#e74c3c; margin-top:50px;"><i class="fas fa-sign-out-alt"></i> Изход</div>
     </div>
 
     <div class="top-bar">
-        <i class="fas fa-bars" style="font-size:24px; margin-right:20px;" onclick="document.getElementById('menu').classList.toggle('active')"></i>
-        <b id="title">Зареждане...</b>
+        <i class="fas fa-bars" style="font-size:24px; margin-right:15px;" onclick="document.getElementById('menu').classList.toggle('active')"></i>
+        <span id="title">SmartFermata</span>
     </div>
 
     <div id="main"></div>
@@ -78,72 +74,83 @@
             db.ref('smart_fermata').on('value', (s) => { store = s.val(); view(role === 'admin' ? 'reports' : 'booking'); });
         }
 
-        function view(page) {
-            const main = document.getElementById('main'); document.getElementById('title').innerText = "SmartFermata";
-            main.innerHTML = ''; document.getElementById('menu').classList.remove('active');
-
-            if(page === 'reports') {
+        function view(p) {
+            const main = document.getElementById('main'); document.getElementById('menu').classList.remove('active');
+            main.innerHTML = '';
+            
+            if(p === 'reports') {
                 document.getElementById('title').innerText = "Финансов отчет";
-                let total = store.bookings ? Object.values(store.bookings).reduce((a, b) => a + Number(b.price), 0) : 0;
+                let total = store.income || 0;
                 main.innerHTML = `
-                    <div class="report-box"><h1>${total} лв.</h1><p>Общ доход от резервации</p></div>
-                    <div class="card"><h3>Последни плащания</h3>
-                        ${store.bookings ? Object.values(store.bookings).map(b => `<p>✅ ${b.horse} - ${b.type}: <b>${b.price} лв.</b></p>`).join('') : '<p>Няма регистрирани плащания.</p>'}
-                    </div>`;
-            } else if(page === 'vouchers') {
-                document.getElementById('title').innerText = "Промо кодове";
-                main.innerHTML = `
+                    <div class="card" style="background:var(--p); color:white; text-align:center;">
+                        <p>Общ доход от началото</p>
+                        <h1>${total} лв.</h1>
+                    </div>
                     <div class="card">
-                        <h3>Генерирай Ваучер</h3>
-                        <input type="text" id="v-code" placeholder="Код (напр. PROMO20)">
-                        <select id="v-pct">
-                            <option value="5">5% Отстъпка</option><option value="10">10%</option><option value="20">20%</option><option value="50">50%</option><option value="80">80%</option>
-                        </select>
-                        <button class="btn-pay" onclick="createVoucher()">Създай ваучер</button>
+                        <h3>Последно плащане</h3>
+                        <p>${store.last_sale || "Няма продажби"}</p>
                     </div>`;
-            } else if(page === 'booking') {
-                document.getElementById('title').innerText = "Резервирай езда";
+            } else if(p === 'horses') {
+                document.getElementById('title').innerText = "Управление на коне";
                 store.horses.forEach((h, i) => {
-                    main.innerHTML += `
-                        <div class="card">
-                            <span class="badge" style="background:${h.status==='Свободен'?'#27ae60':'#e74c3c'}">${h.status}</span>
-                            <h3>${h.name}</h3>
-                            <p>Тип: ${h.type || 'Универсален'}</p>
-                            <label>Избери услуга:</label>
-                            <select id="type-${i}">
-                                <option value="ezda">Свободна езда - ${h.price} лв.</option>
-                                <option value="obuchenie">Обучение за начинаещи - ${parseInt(h.price)+15} лв.</option>
-                            </select>
-                            <input type="text" id="promo-${i}" placeholder="Код за отстъпка">
-                            <button class="btn-pay" onclick="makeBooking(${i})">ПЛАТИ И РЕЗЕРВИРАЙ</button>
-                        </div>`;
+                    main.innerHTML += `<div class="card">
+                        <label>Име на коня</label><input type="text" value="${h.name}" onchange="upd('horses/${i}/name',this.value)">
+                        <label>Цена (лв)</label><input type="number" value="${h.price}" onchange="upd('horses/${i}/price',this.value)">
+                        <label>Статус</label>
+                        <select onchange="upd('horses/${i}/status',this.value)">
+                            <option ${h.status==='Свободен'?'selected':''}>Свободен</option>
+                            <option ${h.status==='Зает'?'selected':''}>Зает</option>
+                        </select>
+                    </div>`;
+                });
+            } else if(p === 'vouchers') {
+                document.getElementById('title').innerText = "Генератор на ваучери";
+                main.innerHTML = `<div class="card">
+                    <h3>Създай код за отстъпка</h3>
+                    <input type="text" id="v-code" placeholder="Код (напр: ЕЗДА50)">
+                    <select id="v-pct">
+                        <option value="5">5%</option><option value="10">10%</option><option value="20">20%</option><option value="50">50%</option><option value="80">80%</option>
+                    </select>
+                    <button class="btn-pay" onclick="saveVoucher()">АКТИВИРАЙ ВАУЧЕР</button>
+                </div>`;
+            } else if(p === 'booking') {
+                document.getElementById('title').innerText = "Резервация за клиенти";
+                store.horses.forEach((h, i) => {
+                    main.innerHTML += `<div class="card">
+                        <span class="status-badge" style="background:${h.status==='Свободен'?'#27ae60':'#e74c3c'}">${h.status}</span>
+                        <h3>${h.name}</h3>
+                        <label>Избери услуга:</label>
+                        <select id="serv-${i}">
+                            <option value="${h.price}">Свободна езда - ${h.price}лв.</option>
+                            <option value="${parseInt(h.price)+20}">Обучение за начинаещи - ${parseInt(h.price)+20}лв.</option>
+                        </select>
+                        <input type="text" id="promo-${i}" placeholder="Промо код (ако имате)">
+                        <button class="btn-pay" onclick="processPayment(${i})">ПЛАТИ И РЕЗЕРВИРАЙ</button>
+                    </div>`;
                 });
             }
-            // ... (другите секции остават аналогични)
         }
 
-        function createVoucher() {
-            const code = document.getElementById('v-code').value;
-            const pct = document.getElementById('v-pct').value;
-            if(code) { db.ref('smart_fermata/vouchers/' + code).set(pct); alert('Ваучерът е активен!'); }
+        function saveVoucher() {
+            const c = document.getElementById('v-code').value;
+            const p = document.getElementById('v-pct').value;
+            if(c) { db.ref('smart_fermata/vouchers/'+c).set(p); alert('Ваучерът е създаден!'); }
         }
 
-        function makeBooking(index) {
-            const horse = store.horses[index];
-            const type = document.getElementById('type-'+index).value;
-            const promo = document.getElementById('promo-'+index).value;
-            let finalPrice = type === 'ezda' ? parseInt(horse.price) : parseInt(horse.price) + 15;
+        function processPayment(idx) {
+            const horse = store.horses[idx];
+            let price = parseInt(document.getElementById('serv-'+idx).value);
+            const promo = document.getElementById('promo-'+idx).value;
             
             if(store.vouchers && store.vouchers[promo]) {
-                let discount = store.vouchers[promo];
-                finalPrice = finalPrice - (finalPrice * (discount / 100));
-                alert('Приложена отстъпка ' + discount + '%!');
+                let disc = store.vouchers[promo];
+                price = price - (price * (disc/100));
+                alert('Приложена отстъпка '+disc+'%!');
             }
             
-            db.ref('smart_fermata/bookings').push({
-                horse: horse.name, price: finalPrice, type: type, date: new Date().toLocaleString()
-            });
-            alert('Плащането от ' + finalPrice + ' лв. е успешно! Кончето е резервирано.');
+            db.ref('smart_fermata/income').set((store.income || 0) + price);
+            db.ref('smart_fermata/last_sale').set(horse.name + ' - ' + price + 'лв. (' + new Date().toLocaleTimeString() + ')');
+            alert('Плащането от ' + price + ' лв. беше успешно! Кончето е ваше.');
         }
 
         function upd(p, v) { db.ref('smart_fermata/'+p).set(v); }
