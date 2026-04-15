@@ -3,162 +3,179 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SmartFermata | Управление на Базата</title>
+    <title>SmartFermata | Администрация</title>
     <style>
-        :root { --p: #10214a; --s: #27ae60; --crit: #d32f2f; --bg: #f4f7f6; }
-        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: #333; }
+        :root { --p: #10214a; --s: #27ae60; --bg: #f0f2f5; --w: #ffffff; --crit: #d32f2f; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; }
+        body { background: var(--bg); color: #333; overflow-x: hidden; }
 
         /* ВХОД */
         #login-screen { position: fixed; inset: 0; background: var(--p); z-index: 5000; display: flex; align-items: center; justify-content: center; }
-        .login-card { background: white; padding: 30px; border-radius: 20px; width: 90%; max-width: 350px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .login-card img { width: 80px; border-radius: 50%; margin-bottom: 15px; border: 2px solid var(--p); }
-        .login-btn { width: 100%; padding: 15px; margin-top: 10px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; color: white; transition: 0.3s; }
-        .login-btn:active { transform: scale(0.95); }
+        .login-card { background: white; padding: 40px; border-radius: 25px; width: 90%; max-width: 400px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+        .login-btn { width: 100%; padding: 15px; margin-top: 15px; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 16px; transition: 0.3s; }
 
-        /* HEADER */
-        .header { background: var(--p); color: white; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; height: 70px; position: sticky; top: 0; z-index: 1000; }
-        .header img { width: 45px; height: 45px; border-radius: 50%; background: white; border: 1px solid #fff; }
-        
-        /* SIDEBAR */
-        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: var(--p); transition: 0.3s; z-index: 2000; box-shadow: 5px 0 15px rgba(0,0,0,0.2); }
+        /* ГЛАВНО МЕНЮ */
+        .header { background: var(--p); color: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; height: 70px; position: sticky; top: 0; z-index: 1000; }
+        .sidebar { position: fixed; left: -300px; top: 0; width: 280px; height: 100%; background: #1a2a4d; transition: 0.3s; z-index: 2000; padding-top: 20px; }
         .sidebar.active { left: 0; }
-        .nav-link { width: 100%; background: none; border: none; color: #adb5bd; padding: 15px 25px; text-align: left; font-size: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer; }
-        .nav-link.active { color: white; background: rgba(39, 174, 96, 0.2); border-left: 5px solid var(--s); }
+        .nav-link { width: 100%; background: none; border: none; color: #adb5bd; padding: 15px 25px; text-align: left; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .nav-link.active { color: white; background: var(--s); border-left: 5px solid white; }
 
-        /* CONTENT */
-        .main { padding: 20px; height: calc(100vh - 70px); overflow-y: auto; }
-        .page { display: none; }
+        /* СЪДЪРЖАНИЕ */
+        .main { padding: 20px; max-width: 1200px; margin: auto; }
+        .page { display: none; animation: fadeIn 0.4s; }
         .page.active { display: block; }
-        
-        .card { background: white; padding: 15px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 15px; border-left: 5px solid var(--s); position: relative; }
-        
-        /* МОДУЛ ЗА КОРЕКЦИИ (OWNER) */
-        .owner-control { background: #fff; border: 2px solid var(--p); padding: 15px; border-radius: 15px; margin-top: 10px; }
-        input, select, textarea { width: 100%; padding: 10px; margin: 8px 0; border-radius: 8px; border: 1px solid #ddd; font-size: 14px; }
-        .save-btn { background: var(--p); color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; margin-bottom: 5px; }
-        .del-btn { background: #f4f4f4; color: #d32f2f; border: none; padding: 5px; font-size: 12px; cursor: pointer; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .notify-btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 15px; border-radius: 8px; border: none; color: white; margin-top: 10px; font-size: 13px; text-decoration: none; font-weight: bold; }
-        .viber { background: #7360f2; }
+        /* КАРТИ И РЕДАКЦИЯ */
+        .card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 20px; border-left: 6px solid var(--p); }
+        .edit-group { margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee; }
+        label { display: block; font-size: 12px; font-weight: bold; color: #666; margin-bottom: 5px; }
+        input, select, textarea { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; }
+        .btn-save { background: var(--s); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; }
+        
+        .stock-tag { padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+        .low { background: #ffebee; color: var(--crit); }
+        .ok { background: #e8f5e9; color: var(--s); }
+
         .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1500; }
         .overlay.active { display: block; }
     </style>
 </head>
-<body oncontextmenu="return false;">
+<body>
 
     <div id="login-screen">
         <div class="login-card">
-            <img src="logo.png">
-            <h2 style="margin-bottom:10px;">SmartFermata</h2>
-            <button class="login-btn" style="background:var(--p)" onclick="startApp('admin')">ВХОД СОБСТВЕНИК</button>
-            <button class="login-btn" style="background:var(--s)" onclick="startApp('client')">ВХОД КЛИЕНТИ</button>
+            <img src="logo.png" style="width:100px; margin-bottom:20px;">
+            <h2 style="margin-bottom:20px;">SmartFermata</h2>
+            <button class="login-btn" style="background:var(--p); color:white;" onclick="init('admin')">ВХОД СОБСТВЕНИК</button>
+            <button class="login-btn" style="background:var(--s); color:white;" onclick="init('client')">КЛИЕНТСКИ ПАНЕЛ</button>
         </div>
     </div>
 
     <header class="header">
-        <div style="display:flex; align-items:center; gap:10px;"><img src="logo.png"><b id="title-tag">SmartFermata</b></div>
-        <button onclick="toggleM()" style="background:none; border:none; color:white; font-size:30px;">☰</button>
+        <div style="display:flex; align-items:center; gap:10px;">
+            <img src="logo.png" style="width:40px; border-radius:50%; background:white;">
+            <b id="panel-title">SmartFermata</b>
+        </div>
+        <button onclick="toggleM()" style="background:none; border:none; color:white; font-size:28px;">☰</button>
     </header>
 
     <div class="overlay" id="ov" onclick="toggleM()"></div>
 
     <aside class="sidebar" id="sb">
-        <div style="text-align:center; padding:20px; border-bottom:1px solid rgba(255,255,255,0.1);">
-            <img src="logo.png" style="width:70px; border-radius:50%; background:white; border:2px solid var(--s);">
-            <h4 id="user-role" style="color:white; margin-top:10px;">Добре дошли</h4>
-        </div>
-        <nav id="nav-box"></nav>
-        <button onclick="location.reload()" style="width:100%; color:#ff4444; padding:20px; background:none; border:none; text-align:left; cursor:pointer; font-weight:bold;">✕ Изход от системата</button>
+        <div id="nav-container"></div>
+        <button onclick="location.reload()" style="width:100%; color:#ff4d4d; padding:20px; background:none; border:none; text-align:left; font-weight:bold;">✕ Изход</button>
     </aside>
 
-    <main class="main" id="main-box"></main>
+    <main class="main" id="content-container"></main>
 
     <script>
-        // ИНИЦИАЛИЗАЦИЯ НА ПАМЕТТА (LocalStorage)
-        let state = JSON.parse(localStorage.getItem('fermata_data')) || {
+        // СЪСТОЯНИЕ НА БАЗАТА (Данните се пазят тук)
+        let appState = {
             horses: [
-                { name: "Грохот", status: "Свободен", price: "40 лв.", food: "07:00 Сено / 19:00 Овес" },
-                { name: "Звезда", status: "Зает", price: "50 лв.", food: "08:00 Сено / 20:00 Овес" }
+                { id: 0, name: "Грохот", status: "Свободен", price: "40 лв", food: "07:00 Сено / 19:00 Овес", health: "Ваксиниран на 10.03.2026", vet: "Д-р Иванов" },
+                { id: 1, name: "Звезда", status: "Зает", price: "50 лв", food: "08:00 Сено / 20:00 Овес", health: "Преглед копита - следваща седмица", vet: "Д-р Николова" }
             ],
-            stock: { hay: 80, oats: 50 },
-            role: 'client'
+            stock: { hay: 25, oats: 120, carrots: 15 },
+            staff: [
+                { name: "Иван Г.", role: "Гледач", shift: "06:00 - 18:00", tasks: "Почистване боксове, хранене" }
+            ]
         };
 
-        function saveData() {
-            localStorage.setItem('fermata_data', JSON.stringify(state));
-        }
-
-        function startApp(role) {
-            state.role = role;
+        function init(role) {
             document.getElementById('login-screen').style.display = 'none';
-            document.getElementById('user-role').innerText = role === 'admin' ? 'Админ: Цветелина' : 'Клиентски Достъп';
-            document.getElementById('title-tag').innerText = role === 'admin' ? 'Owner Panel' : 'SmartFermata';
-            render();
+            document.getElementById('panel-title').innerText = role === 'admin' ? 'Админ Панел' : 'Клиентски Панел';
+            render(role);
         }
 
-        function render() {
-            const nav = document.getElementById('nav-box');
-            const main = document.getElementById('main-box');
-            nav.innerHTML = ''; main.innerHTML = '';
+        function render(role) {
+            const nav = document.getElementById('nav-container');
+            const content = document.getElementById('content-container');
+            nav.innerHTML = ''; content.innerHTML = '';
 
-            if(state.role === 'admin') {
-                // ПАНЕЛ СОБСТВЕНИК
-                addPage('a_horses', '🐎 Управление Коне', `
-                    <h2>Коригирай Коне и Цени</h2>
-                    ${state.horses.map((h, i) => `
-                        <div class="card">
-                            <button class="del-btn" style="float:right" onclick="deleteHorse(${i})">Триене ✕</button>
-                            <b>${h.name}</b>
-                            <input type="text" value="${h.name}" onchange="editHorse(${i}, 'name', this.value)" placeholder="Име">
-                            <select onchange="editHorse(${i}, 'status', this.value)">
-                                <option ${h.status==='Свободен'?'selected':''}>Свободен</option>
-                                <option ${h.status==='Зает'?'selected':''}>Зает</option>
-                            </select>
-                            <input type="text" value="${h.price}" onchange="editHorse(${i}, 'price', this.value)" placeholder="Цена">
-                            <input type="text" value="${h.food}" onchange="editHorse(${i}, 'food', this.value)" placeholder="График Хранене">
+            if(role === 'admin') {
+                // АДМИН МЕНЮ
+                addPage('a_dash', '📊 Табло', `
+                    <h2>Складова наличност</h2>
+                    <div class="card">
+                        <b>Сено:</b> ${appState.stock.hay} бали <span class="stock-tag ${appState.stock.hay < 30 ? 'low' : 'ok'}">${appState.stock.hay < 30 ? 'КРИТИЧНО' : 'OK'}</span><br><br>
+                        <b>Овес:</b> ${appState.stock.oats} кг<br><br>
+                        <div class="edit-group">
+                            <label>Бърза корекция сено (бали):</label>
+                            <input type="number" id="inp-hay" value="${appState.stock.hay}">
+                            <button class="btn-save" onclick="updateStock()">Запази Склада</button>
                         </div>
-                    `).join('')}
-                    <button class="save-btn" onclick="addHorse()">+ Добави Нов Кон</button>
-                `);
-
-                addPage('a_stock', '📦 Склад & Поръчки', `
-                    <h2>Наличност Храна</h2>
-                    <div class="card" style="border-left-color: ${state.stock.hay < 30 ? 'var(--crit)' : 'var(--s)'}">
-                        <b>Сено: ${state.stock.hay} бали</b>
-                        <input type="number" value="${state.stock.hay}" onchange="editStock('hay', this.value)">
-                        ${state.stock.hay < 30 ? '<p class="crit">НИСКО НИВО!</p>' : ''}
-                        <a href="viber://forward?text=Поръчка на СЕНО за база Зорница!" class="notify-btn viber">Поръчай през Viber</a>
                     </div>
                 `);
+
+                addPage('a_horses', '🐎 Коне & Здраве', `
+                    <h2>Управление на конете</h2>
+                    ${appState.horses.map(h => `
+                        <div class="card">
+                            <h3>${h.name}</h3>
+                            <p>🩺 Здраве: ${h.health}</p>
+                            <p>🥣 Хранене: ${h.food}</p>
+                            <div class="edit-group">
+                                <label>Статус:</label>
+                                <select id="st-${h.id}"><option ${h.status==='Свободен'?'selected':''}>Свободен</option><option ${h.status==='Зает'?'selected':''}>Зает</option></select>
+                                <label>Цена езда:</label>
+                                <input type="text" id="pr-${h.id}" value="${h.price}">
+                                <label>Здравословно състояние:</label>
+                                <textarea id="he-${h.id}">${h.health}</textarea>
+                                <button class="btn-save" onclick="updateHorse(${h.id})">Обнови Данните</button>
+                            </div>
+                        </div>
+                    `).join('')}
+                `);
+
+                addPage('a_staff', '👥 Персонал', `
+                    <h2>График на служителите</h2>
+                    ${appState.staff.map(s => `
+                        <div class="card">
+                            <b>${s.name}</b> (${s.role})<br>
+                            <small>Смяна: ${s.shift}</small><br>
+                            <p style="margin-top:10px;">📋 Задачи: ${s.tasks}</p>
+                        </div>
+                    `).join('')}
+                `);
+
             } else {
-                // ПАНЕЛ КЛИЕНТИ
-                addPage('c_home', '🏠 Начало', `<h2>Добре дошли в Зорница!</h2><div class="card">Вашето място за професионална езда.</div>`);
-                addPage('c_list', '🐎 Свободни Коне', `
-                    <h2>Свободни за езда днес</h2>
-                    ${state.horses.map(h => `
+                // КЛИЕНТ МЕНЮ
+                addPage('c_main', '🏠 Начало', `<div class="card"><h2>Добре дошли в Зорница!</h2><p>Тук можете да видите свободните коне за езда днес.</p></div>`);
+                addPage('c_horses', '🐎 Коне за езда', `
+                    <h2>Свободни за днес</h2>
+                    ${appState.horses.map(h => `
                         <div class="card" style="border-left-color: ${h.status==='Свободен'?'var(--s)':'#ccc'}">
                             <b>${h.name}</b> - ${h.status}<br>
-                            <small>Цена: ${h.price}</small>
+                            <big><b>Цена: ${h.price}</b></big>
                         </div>
                     `).join('')}
                 `);
             }
         }
 
-        function addPage(id, name, content) {
-            const nav = document.getElementById('nav-box');
-            const main = document.getElementById('main-box');
-            const isActive = nav.children.length === 0 ? 'active' : '';
-            nav.innerHTML += `<button class="nav-link ${isActive}" onclick="show('${id}', this)">${name}</button>`;
-            main.innerHTML += `<div id="${id}" class="page ${isActive}">${content}</div>`;
+        function addPage(id, name, html) {
+            const nav = document.getElementById('nav-container');
+            const content = document.getElementById('content-container');
+            const active = nav.children.length === 0 ? 'active' : '';
+            nav.innerHTML += `<button class="nav-link ${active}" onclick="show('${id}', this)">${name}</button>`;
+            content.innerHTML += `<div id="${id}" class="page ${active}">${html}</div>`;
         }
 
-        // ФУНКЦИИ ЗА ПРОМЯНА (OWNER)
-        function editHorse(i, field, val) { state.horses[i][field] = val; saveData(); }
-        function addHorse() { state.horses.push({name: "Нов Кон", status: "Свободен", price: "0 лв.", food: ""}); saveData(); render(); }
-        function deleteHorse(i) { state.horses.splice(i, 1); saveData(); render(); }
-        function editStock(f, v) { state.stock[f] = parseInt(v); saveData(); render(); }
+        function updateStock() {
+            appState.stock.hay = document.getElementById('inp-hay').value;
+            alert("Складът е обновен!");
+            render('admin');
+        }
+
+        function updateHorse(id) {
+            appState.horses[id].status = document.getElementById('st-'+id).value;
+            appState.horses[id].price = document.getElementById('pr-'+id).value;
+            appState.horses[id].health = document.getElementById('he-'+id).value;
+            alert("Данните за " + appState.horses[id].name + " са запазени!");
+            render('admin');
+        }
 
         function toggleM() { document.getElementById('sb').classList.toggle('active'); document.getElementById('ov').classList.toggle('active'); }
         function show(id, btn) {
@@ -168,9 +185,6 @@
             btn.classList.add('active');
             if(window.innerWidth < 769) toggleM();
         }
-
-        // ЗАЩИТА СРЕЩУ КОПИРАНЕ
-        document.onkeydown = (e) => { if(e.keyCode==123 || (e.ctrlKey && e.shiftKey && (e.keyCode==73 || e.keyCode==74)) || (e.ctrlKey && e.keyCode==85)) return false; };
     </script>
 </body>
 </html>
