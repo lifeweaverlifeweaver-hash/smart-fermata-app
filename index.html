@@ -3,40 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SmartFermata | Конна База Зорница</title>
+    <title>SmartFermata | База Зорница</title>
     <style>
-        :root { --p: #10214a; --s: #27ae60; --bg: #f4f7f6; --w: #ffffff; }
-        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; }
+        :root { --p: #10214a; --s: #27ae60; --warn: #e67e22; --crit: #d32f2f; --bg: #f4f7f6; }
+        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: #333; }
 
-        /* ВХОДНА СТРАНИЦА */
-        #login-screen { position: fixed; inset: 0; background: var(--p); z-index: 5000; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; }
-        .login-card { background: white; padding: 30px; border-radius: 20px; width: 90%; max-width: 350px; text-align: center; color: #333; }
-        .login-card img { width: 80px; margin-bottom: 15px; border-radius: 50%; border: 2px solid var(--p); }
-        .login-btn { width: 100%; padding: 15px; margin-top: 10px; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 16px; }
-        .btn-admin { background: var(--p); color: white; }
-        .btn-client { background: var(--s); color: white; }
+        /* LOGIN SCREEN */
+        #login-screen { position: fixed; inset: 0; background: var(--p); z-index: 5000; display: flex; align-items: center; justify-content: center; }
+        .login-card { background: white; padding: 30px; border-radius: 20px; width: 90%; max-width: 350px; text-align: center; }
+        .login-card img { width: 80px; border-radius: 50%; border: 2px solid var(--p); margin-bottom: 15px; }
+        .login-btn { width: 100%; padding: 15px; margin-top: 10px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; color: white; }
 
-        /* HEADER & LAYOUT */
+        /* INTERFACE */
         .header { background: var(--p); color: white; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; height: 70px; position: sticky; top: 0; z-index: 1000; }
-        .header img { width: 40px; height: 40px; border-radius: 50%; background: white; }
+        .header img { width: 45px; height: 45px; border-radius: 50%; background: white; }
         
-        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: var(--p); transition: 0.3s; z-index: 2000; padding-top: 20px; }
+        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: var(--p); transition: 0.3s; z-index: 2000; }
         .sidebar.active { left: 0; }
-        .nav-link { width: 100%; background: none; border: none; color: #adb5bd; padding: 15px 25px; text-align: left; font-size: 16px; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .nav-link { width: 100%; background: none; border: none; color: #adb5bd; padding: 15px 25px; text-align: left; font-size: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); }
         .nav-link.active { color: white; background: rgba(39, 174, 96, 0.2); border-left: 5px solid var(--s); }
 
-        /* CONTENT */
         .main { padding: 20px; height: calc(100vh - 70px); overflow-y: auto; }
         .page { display: none; }
         .page.active { display: block; }
-        .card { background: white; padding: 15px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 15px; border-left: 5px solid var(--s); }
-        .admin-only { border-left-color: #d32f2f; }
         
-        h2 { margin-bottom: 15px; color: var(--p); font-size: 1.3rem; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .stat { background: #eee; padding: 10px; border-radius: 8px; text-align: center; }
-        .stat b { display: block; font-size: 1.2rem; }
+        /* СКЛАД И КАРТИ */
+        .card { background: white; padding: 15px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 15px; border-left: 5px solid var(--s); }
+        .stock-bar { height: 10px; background: #ddd; border-radius: 5px; margin: 10px 0; overflow: hidden; }
+        .stock-fill { height: 100%; transition: 0.5s; }
+        .low { color: var(--crit); font-weight: bold; }
+        
+        /* БУТОНИ ЗА ИЗВЕСТИЯ */
+        .notify-btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 15px; border-radius: 8px; border: none; color: white; margin-top: 10px; font-size: 14px; cursor: pointer; text-decoration: none; }
+        .viber { background: #7360f2; }
+        .tele { background: #0088cc; }
+        .sms { background: #27ae60; }
 
         .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1500; }
         .overlay.active { display: block; }
@@ -46,19 +48,15 @@
 
     <div id="login-screen">
         <div class="login-card">
-            <img src="logo.png" alt="Logo">
-            <h3>Добре дошли в SmartFermata</h3>
-            <p style="margin-bottom: 20px; font-size: 0.9rem;">Изберете режим на достъп:</p>
-            <button class="login-btn btn-admin" onclick="login('admin')">ВХОД АДМИНИСТРАТОР</button>
-            <button class="login-btn btn-client" onclick="login('client')">ВХОД КЛИЕНТ</button>
+            <img src="logo.png">
+            <h3>SmartFermata</h3>
+            <button class="login-btn" style="background:var(--p)" onclick="login('admin')">АДМИНИСТРАТОР</button>
+            <button class="login-btn" style="background:var(--s)" onclick="login('client')">КЛИЕНТСКИ ДОСТЪП</button>
         </div>
     </div>
 
     <header class="header">
-        <div style="display:flex; align-items:center; gap:10px;">
-            <img src="logo.png" alt="Logo">
-            <b id="user-title">SmartFermata</b>
-        </div>
+        <div style="display:flex; align-items:center; gap:10px;"><img src="logo.png"><b>SmartFermata</b></div>
         <button onclick="toggleM()" style="background:none; border:none; color:white; font-size:30px;">☰</button>
     </header>
 
@@ -66,67 +64,69 @@
 
     <aside class="sidebar" id="sb">
         <div style="text-align:center; padding:20px; border-bottom:1px solid rgba(255,255,255,0.1);">
-            <img src="logo.png" style="width:70px; border-radius:50%; background:white; border:2px solid var(--s);">
-            <h4 id="menu-name" style="color:white; margin-top:10px;">Панел</h4>
+            <img src="logo.png" style="width:70px; border-radius:50%; background:white;">
+            <h4 id="user-role" style="color:white; margin-top:10px;">Панел</h4>
         </div>
-        <nav id="nav-container">
-            </nav>
+        <nav id="nav-box"></nav>
         <button onclick="location.reload()" style="width:100%; color:#ff4444; padding:20px; background:none; border:none; text-align:left;">✕ Изход</button>
     </aside>
 
-    <main class="main" id="content-container">
-        </main>
+    <main class="main" id="main-box"></main>
 
     <script>
-        const data = {
-            admin: [
-                { id: 'a_dash', n: '📊 Табло Управление', c: `<h2>Общ преглед на базата</h2><div class="grid"><div class="stat"><b>12</b>Коне</div><div class="stat"><b>4</b>Работника</div><div class="stat"><b>480€</b>Приход днес</div><div class="stat"><b>100%</b>Фураж</div></div>` },
-                { id: 'a_horses', n: '🐎 Регистър & Хранене', c: `<h2>Списък Коне</h2><div class="card"><b>Грохот (Жребец)</b><br>Хранене: 07:00 / 13:00 / 19:00<br>Дажба: Сено 5кг, Овес 2кг</div><div class="card"><b>Звезда (Кобила)</b><br>Специален режим: Добавки за стави</div>` },
-                { id: 'a_vet', n: '🩺 Ветеринар & Здраве', c: `<h2>Медицински картони</h2><div class="card admin-only"><b>Ваксинация:</b> Предстои за 5 коня на 20.04<br><b>Ветеринар:</b> Д-р Иванов (0888 123 456)</div>` },
-                { id: 'a_staff', n: '👥 Работници & Смени', c: `<h2>Персонал</h2><div class="card"><b>Иван (Главен Гледач)</b><br>Смяна: 06:00 - 18:00<br>Задачи: Почистване на боксове</div>` }
-            ],
-            client: [
-                { id: 'c_dash', n: '🏠 Начало', c: `<h2>Добре дошли в Зорница!</h2><div class="card">Насладете се на професионално обучение и разходки сред природата.</div>` },
-                { id: 'c_prices', n: '💰 Цени & Услуги', c: `<h2>Услуги</h2><div class="card"><b>Индивидуално обучение</b><br>Цена: 40 лв. / 45 мин.</div><div class="card"><b>Разходка в гората</b><br>Цена: 50 лв. / 60 мин.</div>` },
-                { id: 'c_status', n: '🐎 Свободни Коне', c: `<h2>Коне за езда днес</h2><div class="card" style="border-left-color:var(--s)"><b>Звезда</b> - Свободна (Подходяща за начинаещи)</div><div class="card" style="border-left-color:var(--s)"><b>Вихър</b> - Свободен (За напреднали)</div>` }
-            ]
-        };
+        const adminData = [
+            { id: 'a1', n: '📦 Склад & Храна', c: `
+                <h2>Наличност в склада</h2>
+                <div class="card" style="border-left-color: var(--crit)">
+                    <b>Сено (Бали)</b> - <span class="low">КРИТИЧНО!</span>
+                    <div class="stock-bar"><div class="stock-fill" style="width: 15%; background: var(--crit);"></div></div>
+                    <small>Налично: 20 бали / Минимум: 100</small><br>
+                    <a href="viber://forward?text=Спешна поръчка за СЕНО - База Зорница!" class="notify-btn viber">Viber</a>
+                    <a href="https://t.me/share/url?url=&text=Поръчай сено веднага!" class="notify-btn tele">Telegram</a>
+                    <a href="sms:+359884468329?body=Поръчка за сено" class="notify-btn sms">SMS</a>
+                </div>
+                <div class="card">
+                    <b>Овес (Чували)</b> - Добре
+                    <div class="stock-bar"><div class="stock-fill" style="width: 75%; background: var(--s);"></div></div>
+                    <small>Налично: 45 чувала / Минимум: 10</small>
+                </div>
+            `},
+            { id: 'a2', n: '🐎 Регистър Коне', c: `<h2>Коне и Хранене</h2><div class="card"><b>Грохот</b> - 07:00 (Сено) / 19:00 (Овес)<br><small>Грижи: Почистване на копита всеки ден</small></div>` },
+            { id: 'a3', n: '🩺 Ветеринар', c: `<h2>Ветеринарен контрол</h2><div class="card"><b>Ваксинация Грохот:</b> Предстои след 10 дни<br><a href="sms:+359884468329?body=Напомняне за ваксина" class="notify-btn sms">Извести Ветеринар</a></div>` },
+            { id: 'a4', n: '👥 Работници', c: `<h2>Персонал</h2><div class="card"><b>Иван Г.</b> - Смяна днес<br>Задачи: Хранене и Манеж</div>` }
+        ];
+
+        const clientData = [
+            { id: 'c1', n: '🏠 Начало', c: `<h2>Конна База Зорница</h2><div class="card">Добре дошли! Разгледайте нашите свободни коне и цени.</div>` },
+            { id: 'c2', n: '💰 Цени', c: `<h2>Ценоразпис</h2><div class="card">Обучение на манеж: 40 лв.<br>Свободна езда: 50 лв.</div>` },
+            { id: 'c3', n: '🐎 Свободни Коне', c: `<h2>Свободни за езда</h2><div class="card" style="border-left-color:var(--s)"><b>Звезда</b> (Свободна) - 40 лв.</div>` }
+        ];
 
         function login(role) {
             document.getElementById('login-screen').style.display = 'none';
-            const nav = document.getElementById('nav-container');
-            const content = document.getElementById('content-container');
-            const items = data[role];
+            const nav = document.getElementById('nav-box');
+            const main = document.getElementById('main-box');
+            const items = role === 'admin' ? adminData : clientData;
+            document.getElementById('user-role').innerText = role === 'admin' ? 'Админ: Цветелина' : 'Клиент';
 
-            document.getElementById('user-title').innerText = role === 'admin' ? 'Админ Панел' : 'Клиентски Панел';
-            document.getElementById('menu-name').innerText = role === 'admin' ? 'Цветелина (Админ)' : 'Гост';
-
-            nav.innerHTML = '';
-            content.innerHTML = '';
-
-            items.forEach((item, index) => {
-                nav.innerHTML += `<button class="nav-link ${index===0?'active':''}" onclick="show('${item.id}', this)">${item.n}</button>`;
-                content.innerHTML += `<div id="${item.id}" class="page ${index===0?'active':''}">${item.c}</div>`;
+            nav.innerHTML = ''; main.innerHTML = '';
+            items.forEach((it, i) => {
+                nav.innerHTML += `<button class="nav-link ${i===0?'active':''}" onclick="show('${it.id}', this)">${it.n}</button>`;
+                main.innerHTML += `<div id="${it.id}" class="page ${i===0?'active':''}">${it.c}</div>`;
             });
         }
 
-        function toggleM() {
-            document.getElementById('sb').classList.toggle('active');
-            document.getElementById('ov').classList.toggle('active');
-        }
-
-        function show(id, btn) {
+        function toggleM() { document.getElementById('sb').classList.toggle('active'); document.getElementById('ov').classList.toggle('active'); }
+        function show(id, b) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(id).classList.add('active');
             document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-            btn.classList.add('active');
+            b.classList.add('active');
             if(window.innerWidth < 769) toggleM();
         }
 
         // ЗАЩИТА
-        document.onkeydown = (e) => {
-            if (e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74)) || (e.ctrlKey && e.keyCode == 85)) return false;
-        };
+        document.onkeydown = (e) => { if(e.keyCode==123 || (e.ctrlKey && e.shiftKey && (e.keyCode==73 || e.keyCode==74)) || (e.ctrlKey && e.keyCode==85)) return false; };
         setInterval(() => { (function(){return false}['constructor']('debugger')['call']()); }, 50);
     </script>
 </body>
