@@ -3,98 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SmartFermata | Enterprise Edition</title>
+    <title>SmartFermata | Pro Edition</title>
     <style>
-        :root { --p: #10214a; --s: #27ae60; --bg: #f4f7f6; --w: #ffffff; --danger: #e74c3c; --warn: #f39c12; --info: #3498db; }
+        :root { --p: #10214a; --s: #27ae60; --bg: #f4f7f6; --w: #ffffff; --danger: #e74c3c; --warn: #f39c12; }
         * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: #333; height: 100vh; overflow: hidden; }
 
-        /* AUTH */
+        /* AUTH SCREEN */
         #auth-screen { position: fixed; inset: 0; background: var(--p); z-index: 9999; display: flex; align-items: center; justify-content: center; }
         .login-card { background: white; padding: 35px; border-radius: 25px; width: 90%; max-width: 380px; text-align: center; box-shadow: 0 15px 35px rgba(0,0,0,0.4); }
-        input, select { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 10px; font-size: 16px; outline: none; }
-        .btn-main { width: 100%; padding: 14px; background: var(--s); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 16px; margin-top: 15px; transition: 0.3s; }
-        .btn-main:active { transform: scale(0.98); }
+        input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 10px; font-size: 16px; outline: none; }
+        .btn-main { width: 100%; padding: 14px; background: var(--s); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 16px; margin-top: 15px; }
 
-        /* APP LAYOUT */
-        .app-container { display: flex; height: 100vh; width: 100vw; }
-        .header-mobile { display: none; background: var(--p); color: white; padding: 15px; justify-content: space-between; align-items: center; position: fixed; top: 0; width: 100%; z-index: 1000; height: 70px; }
-
-        /* SIDEBAR */
-        .sidebar { width: 280px; background: var(--p); color: white; display: flex; flex-direction: column; flex-shrink: 0; z-index: 2000; transition: 0.3s; }
+        /* LAYOUT */
+        .app-container { display: flex; height: 100vh; }
+        .sidebar { width: 280px; background: var(--p); color: white; flex-shrink: 0; transition: 0.3s; z-index: 2000; }
         .sb-header { padding: 30px 20px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); }
-        .sb-logo { width: 90px; height: 90px; border-radius: 50%; background: white; margin-bottom: 15px; border: 3px solid var(--s); padding: 5px; }
-        .nav-links { flex: 1; padding: 15px 0; overflow-y: auto; }
-        .nav-btn { width: 100%; padding: 15px 25px; border: none; background: none; color: #adb5bd; text-align: left; cursor: pointer; display: flex; align-items: center; gap: 15px; font-size: 15px; transition: 0.2s; }
-        .nav-btn:hover { color: white; background: rgba(255,255,255,0.05); }
+        .sb-logo { width: 80px; height: 80px; border-radius: 50%; background: white; margin-bottom: 10px; border: 2px solid var(--s); }
+        
+        .nav-btn { width: 100%; padding: 15px 25px; border: none; background: none; color: #adb5bd; text-align: left; cursor: pointer; display: flex; align-items: center; gap: 15px; }
         .nav-btn.active { color: white; background: rgba(255,255,255,0.1); border-left: 5px solid var(--s); }
 
-        /* CONTENT AREA */
         .content { flex: 1; overflow-y: auto; padding: 30px; }
-        .pg { display: none; animation: fadeIn 0.4s ease; }
+        .pg { display: none; }
         .pg.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* CARDS & UI */
-        h1 { margin-bottom: 25px; color: var(--p); font-size: 24px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
-        .card { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-top: 4px solid var(--s); position: relative; }
-        .badge { position: absolute; top: 15px; right: 15px; padding: 5px 12px; border-radius: 50px; font-size: 11px; font-weight: bold; }
-        .badge-low { background: #ffebee; color: var(--danger); }
-        .val { font-size: 35px; font-weight: 800; color: var(--p); margin: 10px 0; }
-        
-        .list-item { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #eee; font-size: 14px; }
-        .list-item:last-child { border: none; }
-
-        /* MOBILE OVERLAY */
-        .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1500; }
+        /* TABLES & CARDS */
+        .card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 20px; border-top: 4px solid var(--s); }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th { text-align: left; padding: 12px; background: #f8f9fa; font-size: 13px; color: #666; }
+        td { padding: 12px; border-bottom: 1px solid #eee; font-size: 14px; }
+        .status-pill { padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: bold; }
+        .st-ok { background: #e8f5e9; color: #2e7d32; }
 
         @media (max-width: 768px) {
             .sidebar { position: fixed; left: -280px; height: 100%; }
             .sidebar.active { left: 0; }
-            .header-mobile { display: flex; }
-            .content { padding: 90px 20px 20px; }
-            .overlay.active { display: block; }
+            .content { padding: 20px; }
         }
     </style>
 </head>
-<body oncontextmenu="return false;">
+<body>
 
     <div id="auth-screen">
         <div class="login-card">
-            <img src="logo.png" class="sb-logo" style="width:100px; height:100px;">
-            <h2>SmartFermata ERP</h2>
-            <p style="color:#666; margin-bottom:20px;">Система за управление на конна база</p>
+            <img src="logo.png" style="width:80px; border-radius:50%; margin-bottom:15px;">
+            <h2>Добре дошли</h2>
+            <p style="color:#666; margin-bottom:20px;">SmartFermata ERP</p>
             <input type="text" id="user" placeholder="Потребител">
             <input type="password" id="pass" placeholder="Парола">
-            <button class="btn-main" onclick="login()">Влез в базата</button>
+            <button class="btn-main" onclick="login()">Влез</button>
         </div>
     </div>
 
     <div class="app-container">
-        <header class="header-mobile">
-            <div style="display:flex; align-items:center; gap:10px;">
-                <img src="logo.png" style="width:40px; border-radius:50%; background:white;">
-                <b>SmartFermata</b>
-            </div>
-            <button onclick="t()" style="background:none; border:none; color:white; font-size:30px;">☰</button>
-        </header>
-
-        <div class="overlay" id="ov" onclick="t()"></div>
-
         <aside class="sidebar" id="sb">
             <div class="sb-header">
                 <img src="logo.png" class="sb-logo">
-                <h3 id="role-tag">Администратор</h3>
-                <small style="opacity:0.6;">База "Зорница"</small>
+                <h4 id="role-tag">Администратор</h4>
             </div>
-            <nav class="nav-links">
-                <button class="nav-btn active" onclick="s('dash', this)">📊 Контролно Табло</button>
+            <nav>
+                <button class="nav-btn active" onclick="s('dash', this)">📊 Табло</button>
                 <button class="nav-btn" onclick="s('horses', this)">🐎 Регистър Коне</button>
-                <button class="nav-btn" onclick="s('care', this)">🩺 Здраве & Ковач</button>
-                <button class="nav-btn" onclick="s('riding', this)">📅 График Езда</button>
-                <button class="nav-btn admin-only" onclick="s('stock', this)">📦 Склад & Храна</button>
-                <button class="nav-btn admin-only" onclick="s('staff', this)">👥 Персонал</button>
+                <button class="nav-btn" onclick="s('care', this)">🩺 Здраве</button>
                 <button class="nav-btn" onclick="s('pay', this)">💳 Плащания</button>
                 <button class="nav-btn" onclick="location.reload()" style="color:var(--danger); margin-top:20px;">🚪 Изход</button>
             </nav>
@@ -102,111 +73,89 @@
 
         <main class="content">
             <div id="dash" class="pg active">
-                <h1>Общ преглед</h1>
-                <div class="grid">
-                    <div class="card">
-                        <small>Активни Коне</small>
-                        <div class="val">12</div>
-                        <p style="color:var(--s);">Всички са в добро здраве</p>
-                    </div>
-                    <div class="card" style="border-top-color:var(--warn)">
-                        <small>Критични наличности</small>
-                        <div class="val">2</div>
-                        <p style="color:var(--danger);">Овесът свършва след 3 дни!</p>
-                    </div>
-                </div>
-            </div>
-
-            <div id="care" class="pg">
-                <h1>🩺 Здравен дневник</h1>
+                <h1>Контролно Табло</h1>
                 <div class="card">
-                    <h3>Предстоящи процедури</h3>
-                    <div class="list-item"><span>Кон: Гръм</span><strong>Ковач (20.04)</strong></div>
-                    <div class="list-item"><span>Кон: Звезда</span><strong>Ваксинация (25.04)</strong></div>
-                    <div class="list-item"><span>Кон: Буря</span><strong>Зъболекар (02.05)</strong></div>
+                    <h3>Бърза справка</h3>
+                    <p>Днес имате <strong>4</strong> планирани тренировки и <strong>1</strong> посещение от ковач.</p>
                 </div>
             </div>
 
-            <div id="stock" class="pg admin-only">
-                <h1>📦 Управление на Склад</h1>
-                <div class="grid">
-                    <div class="card">
-                        <span class="badge badge-low">Критично</span>
-                        <h3>Сено (Бали)</h3>
-                        <div class="val">15</div>
-                        <p>Достатъчно за: 4 дни</p>
-                    </div>
-                    <div class="card">
-                        <h3>Овес (кг)</h3>
-                        <div class="val">120</div>
-                        <p>Достатъчно за: 10 дни</p>
-                    </div>
-                </div>
-            </div>
-
-            <div id="staff" class="pg admin-only">
-                <h1>👥 График Персонал</h1>
+            <div id="horses" class="pg">
+                <h1>🐎 Регистър на конете</h1>
                 <div class="card">
-                    <h3>Днешни дежурства</h3>
-                    <div class="list-item"><span>Хранене (Сутрин)</span><strong>Мария</strong></div>
-                    <div class="list-item"><span>Почистване боксове</span><strong>Иван</strong></div>
-                    <div class="list-item"><span>Тренировки</span><strong>Цветелина</strong></div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Име</th>
+                                <th>Порода</th>
+                                <th>Възраст</th>
+                                <th>Статус</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><b>Гръм</b></td>
+                                <td>Арабска</td>
+                                <td>7г.</td>
+                                <td><span class="status-pill st-ok">Активен</span></td>
+                            </tr>
+                            <tr>
+                                <td><b>Звезда</b></td>
+                                <td>Ханновер</td>
+                                <td>5г.</td>
+                                <td><span class="status-pill st-ok">Активен</span></td>
+                            </tr>
+                            <tr>
+                                <td><b>Буря</b></td>
+                                <td>Чистокръвна</td>
+                                <td>9г.</td>
+                                <td><span class="status-pill st-ok">В почивка</span></td>
+                            </tr>
+                            <tr>
+                                <td><b>Макс</b></td>
+                                <td>Пони</td>
+                                <td>12г.</td>
+                                <td><span class="status-pill st-ok">Активен</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <button class="btn-main" style="width:auto; padding:10px 20px; margin-top:15px;">+ Добави нов кон</button>
                 </div>
             </div>
 
-            <div id="riding" class="pg">
-                <h1>📅 Програма за езда</h1>
-                <div class="card">
-                    <h3>Днешни часове</h3>
-                    <div class="list-item"><span>09:00 - Обучение</span><strong>Кон: Гръм (Ездач: Анна)</strong></div>
-                    <div class="list-item"><span>11:30 - Разходка</span><strong>Кон: Макс (Ездач: Петър)</strong></div>
-                    <button class="btn-main">Нов запис в графика</button>
-                </div>
-            </div>
-
-            <div id="pay" class="pg">
-                <h1>💳 Разплащателен център</h1>
-                <div class="card">
-                    <h3>Начин на плащане</h3>
-                    <p style="margin:10px 0;"><strong>IBAN:</strong> BG88 SOMB 9123 0000 1234 56</p>
-                    <p><strong>EasyPay Код:</strong> 123 456 789</p>
-                    <hr style="margin:20px 0; opacity:0.1;">
-                    <small>Моля, прикачете основание: "Такса езда - Име"</small>
-                </div>
-            </div>
-
+            <div id="care" class="pg"><h1>🩺 Здравни досиета</h1><div class="card">Тук ще виждате историята на ваксините.</div></div>
+            <div id="pay" class="pg"><h1>💳 Плащания</h1><div class="card">IBAN: BG88 SOMB 9123 0000 1234 56</div></div>
         </main>
     </div>
 
     <script>
+        // ЛОГИКА ЗА ВХОД С ENTER
+        const loginCard = document.querySelector('.login-card');
+        loginCard.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                login();
+            }
+        });
+
         function login() {
             const u = document.getElementById('user').value;
             const p = document.getElementById('pass').value;
             if(u === 'admin' && p === 'admin') {
                 document.getElementById('auth-screen').style.display = 'none';
-            } else if(u === 'client' && p === '1234') {
-                document.getElementById('auth-screen').style.display = 'none';
-                document.getElementById('role-tag').innerText = 'Клиент';
-                document.querySelectorAll('.admin-only').forEach(e => e.style.display = 'none');
-            } else { alert('Грешни данни!'); }
+            } else {
+                alert('Грешно име или парола!');
+            }
         }
 
-        function t() { 
-            document.getElementById('sb').classList.toggle('active'); 
-            document.getElementById('ov').classList.toggle('active'); 
-        }
-        
         function s(id, btn) {
             document.querySelectorAll('.pg').forEach(p => p.classList.remove('active'));
             document.getElementById(id).classList.add('active');
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            if(window.innerWidth < 769) t();
         }
 
-        // Защита от специалисти
+        // Защита
         document.onkeydown = function(e) { if(e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74)) || (e.ctrlKey && e.keyCode == 85)) return false; };
-        setInterval(function(){ (function(){return false}['constructor']('debugger')['call']()); }, 50);
     </script>
 </body>
 </html>
