@@ -3,17 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SmartFermata | Управление</title>
+    <title>SmartFermata | Управление на Базата</title>
     <style>
         :root { --p: #10214a; --s: #27ae60; --crit: #d32f2f; --bg: #f4f7f6; }
         * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: #333; overflow: hidden; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: #333; }
 
-        /* LOGIN */
+        /* ВХОД */
         #login-screen { position: fixed; inset: 0; background: var(--p); z-index: 5000; display: flex; align-items: center; justify-content: center; }
-        .login-card { background: white; padding: 30px; border-radius: 20px; width: 90%; max-width: 350px; text-align: center; }
-        .login-card img { width: 80px; border-radius: 50%; border: 2px solid var(--p); margin-bottom: 15px; }
-        .login-btn { width: 100%; padding: 15px; margin-top: 10px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; color: white; }
+        .login-card { background: white; padding: 30px; border-radius: 20px; width: 90%; max-width: 350px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .login-card img { width: 80px; border-radius: 50%; margin-bottom: 15px; border: 2px solid var(--p); }
+        .login-btn { width: 100%; padding: 15px; margin-top: 10px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; color: white; transition: 0.3s; }
+        .login-btn:active { transform: scale(0.95); }
 
         /* HEADER */
         .header { background: var(--p); color: white; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; height: 70px; position: sticky; top: 0; z-index: 1000; }
@@ -32,15 +33,14 @@
         
         .card { background: white; padding: 15px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 15px; border-left: 5px solid var(--s); position: relative; }
         
-        /* OWNER EDIT MODULE */
-        .edit-box { background: #eef2f7; padding: 10px; border-radius: 8px; margin-top: 10px; border: 1px dashed var(--p); }
-        input, select { width: 100%; padding: 8px; margin: 5px 0; border-radius: 5px; border: 1px solid #ccc; }
-        .save-btn { background: var(--p); color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; width: 100%; margin-top: 5px; }
+        /* МОДУЛ ЗА КОРЕКЦИИ (OWNER) */
+        .owner-control { background: #fff; border: 2px solid var(--p); padding: 15px; border-radius: 15px; margin-top: 10px; }
+        input, select, textarea { width: 100%; padding: 10px; margin: 8px 0; border-radius: 8px; border: 1px solid #ddd; font-size: 14px; }
+        .save-btn { background: var(--p); color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; margin-bottom: 5px; }
+        .del-btn { background: #f4f4f4; color: #d32f2f; border: none; padding: 5px; font-size: 12px; cursor: pointer; }
 
-        /* NOTIFICATIONS */
-        .notify-btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 15px; border-radius: 8px; border: none; color: white; margin-top: 10px; font-size: 13px; cursor: pointer; text-decoration: none; }
-        .viber { background: #7360f2; } .sms { background: #27ae60; }
-
+        .notify-btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 15px; border-radius: 8px; border: none; color: white; margin-top: 10px; font-size: 13px; text-decoration: none; font-weight: bold; }
+        .viber { background: #7360f2; }
         .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1500; }
         .overlay.active { display: block; }
     </style>
@@ -51,13 +51,13 @@
         <div class="login-card">
             <img src="logo.png">
             <h2 style="margin-bottom:10px;">SmartFermata</h2>
-            <button class="login-btn" style="background:var(--p)" onclick="login('admin')">ВХОД СОБСТВЕНИК</button>
-            <button class="login-btn" style="background:var(--s)" onclick="login('client')">ВХОД КЛИЕНТИ</button>
+            <button class="login-btn" style="background:var(--p)" onclick="startApp('admin')">ВХОД СОБСТВЕНИК</button>
+            <button class="login-btn" style="background:var(--s)" onclick="startApp('client')">ВХОД КЛИЕНТИ</button>
         </div>
     </div>
 
     <header class="header">
-        <div style="display:flex; align-items:center; gap:10px;"><img src="logo.png"><b id="title">SmartFermata</b></div>
+        <div style="display:flex; align-items:center; gap:10px;"><img src="logo.png"><b id="title-tag">SmartFermata</b></div>
         <button onclick="toggleM()" style="background:none; border:none; color:white; font-size:30px;">☰</button>
     </header>
 
@@ -65,113 +65,17 @@
 
     <aside class="sidebar" id="sb">
         <div style="text-align:center; padding:20px; border-bottom:1px solid rgba(255,255,255,0.1);">
-            <img src="logo.png" style="width:70px; border-radius:50%; background:white;">
-            <h4 id="user-display" style="color:white; margin-top:10px;">Панел</h4>
+            <img src="logo.png" style="width:70px; border-radius:50%; background:white; border:2px solid var(--s);">
+            <h4 id="user-role" style="color:white; margin-top:10px;">Добре дошли</h4>
         </div>
         <nav id="nav-box"></nav>
-        <button onclick="location.reload()" style="width:100%; color:#ff4444; padding:20px; background:none; border:none; text-align:left; cursor:pointer;">✕ Изход</button>
+        <button onclick="location.reload()" style="width:100%; color:#ff4444; padding:20px; background:none; border:none; text-align:left; cursor:pointer; font-weight:bold;">✕ Изход от системата</button>
     </aside>
 
     <main class="main" id="main-box"></main>
 
     <script>
-        // ДАННИ - Могат да се редактират от админ панела
-        let horses = [
-            { name: "Грохот", status: "Свободен", price: "40 лв.", notes: "Подходящ за напреднали" },
-            { name: "Звезда", status: "Зает", price: "50 лв.", notes: "На разходка" }
-        ];
-
-        let stock = { hay: 20, oats: 85 };
-
-        function login(role) {
-            document.getElementById('login-screen').style.display = 'none';
-            document.getElementById('user-display').innerText = role === 'admin' ? 'Цветелина (Admin)' : 'Клиент';
-            render(role);
-        }
-
-        function render(role) {
-            const nav = document.getElementById('nav-box');
-            const main = document.getElementById('main-box');
-            nav.innerHTML = ''; main.innerHTML = '';
-
-            if(role === 'admin') {
-                // АДМИН ПАНЕЛ - МОДУЛ ЗА КОРЕКЦИИ
-                addPage('a_stock', '📦 Склад & Корекции', `
-                    <h2>Управление на Склада</h2>
-                    <div class="card" style="border-left-color: ${stock.hay < 30 ? 'var(--crit)' : 'var(--s)'}">
-                        <b>Сено (Бали): ${stock.hay}</b>
-                        <div class="edit-box">
-                            <small>Коригирай количество:</small>
-                            <input type="number" id="new-hay" value="${stock.hay}">
-                            <button class="save-btn" onclick="updateStock('hay')">Обнови Склада</button>
-                        </div>
-                        <a href="viber://forward?text=Поръчка на сено за база Зорница!" class="notify-btn viber">Viber Поръчка</a>
-                    </div>
-
-                    <h2>Корекция на Клиентски Цени</h2>
-                    ${horses.map((h, i) => `
-                        <div class="card">
-                            <b>${h.name}</b>
-                            <div class="edit-box">
-                                <label>Статус:</label>
-                                <select id="st-${i}"><option ${h.status==='Свободен'?'selected':''}>Свободен</option><option ${h.status==='Зает'?'selected':''}>Зает</option></select>
-                                <label>Цена:</label>
-                                <input type="text" id="pr-${i}" value="${h.price}">
-                                <button class="save-btn" onclick="updateHorse(${i})">Запази промените</button>
-                            </div>
-                        </div>
-                    `).join('')}
-                `);
-            } else {
-                // КЛИЕНТСКИ ПАНЕЛ
-                addPage('c_main', '🏠 Начало', `<h2>Добре дошли!</h2><div class="card">Конна база Зорница предлага професионална езда и грижа за конете.</div>`);
-                addPage('c_horses', '🐎 Коне & Цени', `
-                    <h2>Свободни коне за езда</h2>
-                    ${horses.map(h => `
-                        <div class="card" style="border-left-color: ${h.status==='Свободен'?'var(--s)':'#ccc'}">
-                            <b>${h.name}</b> - ${h.status}<br>
-                            <small>Цена: ${h.price}</small><br>
-                            <small>${h.notes}</small>
-                        </div>
-                    `).join('')}
-                `);
-            }
-        }
-
-        function addPage(id, name, content) {
-            const nav = document.getElementById('nav-box');
-            const main = document.getElementById('main-box');
-            const isActive = nav.children.length === 0 ? 'active' : '';
-            nav.innerHTML += `<button class="nav-link ${isActive}" onclick="show('${id}', this)">${name}</button>`;
-            main.innerHTML += `<div id="${id}" class="page ${isActive}">${content}</div>`;
-        }
-
-        // ФУНКЦИИ ЗА КОРЕКЦИЯ (СОБСТВЕНИК)
-        function updateStock(type) {
-            const val = document.getElementById('new-' + type).value;
-            stock[type] = parseInt(val);
-            alert('Складът е обновен!');
-            render('admin');
-        }
-
-        function updateHorse(index) {
-            horses[index].status = document.getElementById('st-' + index).value;
-            horses[index].price = document.getElementById('pr-' + index).value;
-            alert('Данните за ' + horses[index].name + ' са обновени за клиентите!');
-            render('admin');
-        }
-
-        function toggleM() { document.getElementById('sb').classList.toggle('active'); document.getElementById('ov').classList.toggle('active'); }
-        function show(id, btn) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-            btn.classList.add('active');
-            if(window.innerWidth < 769) toggleM();
-        }
-
-        // ЗАЩИТА
-        document.onkeydown = (e) => { if(e.keyCode==123 || (e.ctrlKey && e.shiftKey && (e.keyCode==73 || e.keyCode==74)) || (e.ctrlKey && e.keyCode==85)) return false; };
-    </script>
-</body>
-</html>
+        // ИНИЦИАЛИЗАЦИЯ НА ПАМЕТТА (LocalStorage)
+        let state = JSON.parse(localStorage.getItem('fermata_data')) || {
+            horses: [
+                { name: "Грохот", status: "Свободен", price: "40 лв.", food: "0
