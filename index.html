@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SmartFermata Professional</title>
+    <style>
+        /* ДИЗАЙН И ЦВЕТОВЕ (ЛОГО СИНЬО) */
+        :root { --p: #1a237e; --s: #27ae60; --bg: #f4f7f6; --w: #ffffff; }
+        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: #333; overflow-x: hidden; }
+
+        /* HEADER */
+        .header { background: var(--p); color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 2000; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        
+        /* SIDEBAR */
+        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: var(--p); transition: 0.3s; z-index: 2100; padding-top: 20px; }
+        .sidebar.active { left: 0; }
+        .nav-btn { width: 100%; background: none; border: none; color: #adb5bd; padding: 18px 25px; text-align: left; font-size: 16px; cursor: pointer; display: flex; align-items: center; gap: 12px; }
+        .nav-btn.active { color: white; background: rgba(255,255,255,0.15); border-left: 4px solid var(--s); }
+
+        /* CONTENT */
+        .main { padding: 20px; max-width: 1200px; margin: 0 auto; }
+        .card { background: var(--w); padding: 20px; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-top: 4px solid var(--s); margin-bottom: 15px; }
+        .val { font-size: 32px; font-weight: bold; color: var(--p); margin: 10px 0; }
+        
+        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2050; }
+        .overlay.active { display: block; }
+
+        @media (min-width: 769px) {
+            .sidebar { left: 0; }
+            .header { display: none; }
+            .main { margin-left: 280px; }
+        }
+    </style>
+</head>
+<body oncontextmenu="return false;">
+
+    <header class="header">
+        <div style="display:flex; align-items:center; gap:10px;">
+            <svg width="32" height="32" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="48" fill="white"/>
+                <path d="M30 70 L50 30 L70 70" stroke="#1a237e" stroke-width="8" fill="none"/>
+            </svg>
+            <b style="font-size: 1.1rem;">SmartFermata</b>
+        </div>
+        <button onclick="t()" style="background:none; border:none; color:white; font-size:30px;">☰</button>
+    </header>
+
+    <div class="overlay" id="ov" onclick="t()"></div>
+
+    <aside class="sidebar" id="sb">
+        <h2 style="color:white; text-align:center; padding: 20px;">SmartFermata</h2>
+        <nav>
+            <button class="nav-btn active">📊 Табло</button>
+            <button class="nav-btn">🐎 График Коне</button>
+            <button class="nav-btn">💰 Финанси</button>
+            <button class="nav-btn">⚙️ Настройки</button>
+        </nav>
+    </aside>
+
+    <main class="main">
+        <h1>Здравейте, Цветелина!</h1>
+        <p style="color:#888; margin-bottom:20px;">Управление на база "Зорница"</p>
+        
+        <div class="card">
+            <h3>Спестени от такси</h3>
+            <div class="val">144 €</div>
+            <p style="color:var(--s); font-weight:bold;">✓ Директен приход</p>
+        </div>
+
+        <div class="card" style="border-top-color: var(--p);">
+            <h3>Дневен Оборот</h3>
+            <div class="val">480 €</div>
+            <p style="color:#666;">Общо за днес</p>
+        </div>
+    </main>
+
+    <script>
+        function t() {
+            document.getElementById('sb').classList.toggle('active');
+            document.getElementById('ov').classList.toggle('active');
+        }
+        // ЗАЩИТА НА КОДА
+        document.onkeydown = function(e) {
+            if(e.keyCode == 123 || (e.ctrlKey && e.shiftKey && e.keyCode == 73)) return false;
+        }
+    </script>
+</body>
+</html>
