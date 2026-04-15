@@ -3,107 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SmartFermata Admin</title>
+    <title>SmartFermata | Admin Panel</title>
     <style>
-        :root { --p: #1a237e; --s: #27ae60; --bg: #f4f7f6; --w: #ffffff; }
-        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: #333; }
-
-        /* HEADER */
-        .header { background: var(--p); color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 2000; }
-        .logo-box { display: flex; align-items: center; gap: 10px; }
+        /* ЦВЕТОВЕ НА БАЗА ЛОГОТО */
+        :root { --p: #10214a; --s: #27ae60; --bg: #f4f7f6; --w: #ffffff; }
         
-        /* КРАСИВО ЛОГО КОН (SVG) */
-        .horse-logo { width: 35px; height: 35px; background: white; border-radius: 50%; padding: 5px; fill: var(--p); }
+        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: #333; overflow-x: hidden; }
 
-        /* SIDEBAR */
-        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: var(--p); transition: 0.3s; z-index: 2100; padding-top: 20px; }
+        /* ГОРНА ЛЕНТА (MOBILE) */
+        .header { background: var(--p); color: white; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 2000; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
+        .logo-area { display: flex; align-items: center; gap: 12px; }
+        
+        /* ВГРАДЕНОТО ЛОГО КАТО СТИЛ */
+        .logo-img { 
+            width: 42px; height: 42px; border-radius: 50%; border: 2px solid white; background: white;
+            object-fit: cover;
+        }
+
+        /* МЕНЮ */
+        .sidebar { position: fixed; left: -285px; top: 0; width: 280px; height: 100%; background: var(--p); transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 2100; padding-top: 20px; box-shadow: 5px 0 15px rgba(0,0,0,0.3); }
         .sidebar.active { left: 0; }
-        .nav-btn { width: 100%; background: none; border: none; color: #adb5bd; padding: 18px 25px; text-align: left; font-size: 16px; cursor: pointer; display: flex; align-items: center; gap: 12px; }
-        .nav-btn.active { color: white; background: rgba(255,255,255,0.15); border-left: 4px solid var(--s); }
+        .sidebar-header { text-align: center; padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 15px; }
+        .logo-large { width: 90px; height: 90px; border-radius: 50%; border: 3px solid white; margin-bottom: 10px; }
 
-        /* CONTENT SECTIONS */
+        .nav-btn { width: 100%; background: none; border: none; color: #adb5bd; padding: 18px 25px; text-align: left; font-size: 16px; cursor: pointer; display: flex; align-items: center; gap: 15px; transition: 0.3s; }
+        .nav-btn.active { color: white; background: rgba(255,255,255,0.1); border-left: 5px solid var(--s); }
+
+        /* СЪДЪРЖАНИЕ */
         .main { padding: 20px; max-width: 1200px; margin: 0 auto; }
-        .app-section { display: none; } /* Скриваме всички секции */
-        .app-section.active { display: block; } /* Показваме само активната */
+        .app-section { display: none; animation: fadeIn 0.4s ease; }
+        .app-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .card { background: var(--w); padding: 20px; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-top: 4px solid var(--s); margin-bottom: 15px; }
-        .val { font-size: 32px; font-weight: bold; color: var(--p); margin: 10px 0; }
+        .card { background: var(--w); padding: 22px; border-radius: 18px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-top: 5px solid var(--s); margin-bottom: 20px; }
+        .val { font-size: 35px; font-weight: bold; color: var(--p); margin: 8px 0; }
         
-        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2050; }
+        /* ТЪМЕН СЛОЙ ПРИ ОТВОРЕНО МЕНЮ */
+        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2050; backdrop-filter: blur(3px); }
         .overlay.active { display: block; }
-        
-        @media (min-width: 769px) { .sidebar { left: 0; } .header { display: none; } .main { margin-left: 280px; } }
+
+        @media (min-width: 769px) {
+            .sidebar { left: 0; box-shadow: none; }
+            .header, .overlay { display: none; }
+            .main { margin-left: 280px; padding: 40px; width: calc(100% - 280px); }
+        }
     </style>
 </head>
 <body oncontextmenu="return false;">
 
     <header class="header">
-        <div class="logo-box">
-            <svg class="horse-logo" viewBox="0 0 512 512"><path d="M440.3 358.3c-23.1-23.1-53.7-36.3-85.9-37.1l-40.4-.9c-14.8-.3-26.7-12.3-27-27.1-.4-19.1 12.1-36.2 30.7-41.9l46.2-14.1c32.7-10 56-39.7 57.8-73.7.8-15.5-2.2-31-8.6-45.2-12.5-27.7-37.8-46.7-67.6-50.6-5.8-.8-11.7-1.1-17.6-1.1-42.5 0-82.6 18.2-110.1 50l-23 26.6c-13.6 15.7-33.1 25.1-54 26l-39.4 1.7c-21.4.9-38.3 18.5-38.3 39.9v101.9c0 22.1 17.9 40 40 40h20.1c11.5 0 22.1-6.5 27.4-16.7l17-33.1c4.5-8.7 13.5-14.2 23.3-14.2h36.1c15.2 0 27.6 12.4 27.6 27.6v127.1c0 15.2-12.4 27.6-27.6 27.6H128c-17.7 0-32 14.3-32 32s14.3 32 32 32h256c17.7 0 32-14.3 32-32s-14.3-32-32-32h-12.7c-17.4 0-31.1-14.8-29.6-32.1 1.6-18.4 16.9-32.9 35.4-32.9h15.2c40.5 0 78.5 17.4 104.9 47.9 11.6 13.4 31.7 15.1 45.3 3.5s15.1-31.7 3.5-45.3c-1.3-1.5-2.7-3-4.1-4.4z"/></svg>
-            <b style="font-size: 1.1rem;">SmartFermata</b>
-        </div>
-        <button onclick="t()" style="background:none; border:none; color:white; font-size:30px;">☰</button>
-    </header>
-
-    <div class="overlay" id="ov" onclick="t()"></div>
-
-    <aside class="sidebar" id="sb">
-        <h2 style="color:white; text-align:center; padding: 20px;">SmartFermata</h2>
-        <nav>
-            <button class="nav-btn active" onclick="show('dashboard', this)">📊 Табло</button>
-            <button class="nav-btn" onclick="show('horses', this)">🐎 График Коне</button>
-            <button class="nav-btn" onclick="show('finances', this)">💰 Финанси</button>
-            <button class="nav-btn" onclick="show('settings', this)">⚙️ Настройки</button>
-        </nav>
-    </aside>
-
-    <main class="main">
-        <section id="dashboard" class="app-section active">
-            <h1>Здравейте, Цветелина! 👋</h1>
-            <p style="color:#888; margin-bottom:20px;">Управление на база "Зорница"</p>
-            <div class="card"><small>Спестени такси</small><div class="val">144 €</div><p style="color:var(--s);">✓ Директен приход</p></div>
-            <div class="card" style="border-top-color:var(--p);"><small>Дневен Оборот</small><div class="val">480 €</div></div>
-        </section>
-
-        <section id="horses" class="app-section">
-            <h1>🐎 График Коне</h1>
-            <div class="card">Тук ще виждате кога всеки кон е зает или свободен.</div>
-        </section>
-
-        <section id="finances" class="app-section">
-            <h1>💰 Финансов Отчет</h1>
-            <div class="card">Подробна статистика за приходите в реално време.</div>
-        </section>
-
-        <section id="settings" class="app-section">
-            <h1>⚙️ Настройки</h1>
-            <div class="card">Управление на вашия профил и цени.</div>
-        </section>
-    </main>
-
-    <script>
-        // Функция за отваряне/затваряне на менюто
-        function t() {
-            document.getElementById('sb').classList.toggle('active');
-            document.getElementById('ov').classList.toggle('active');
-        }
-
-        // Функция за смяна на страниците (Активира бутоните!)
-        function show(sectionId, btn) {
-            // 1. Скриваме всички секции
-            document.querySelectorAll('.app-section').forEach(s => s.classList.remove('active'));
-            // 2. Показваме избраната
-            document.getElementById(sectionId).classList.add('active');
-            // 3. Сменяме активния бутон в менюто
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            // 4. Затваряме менюто (ако сме на телефон)
-            if(window.innerWidth < 769) t();
-        }
-
-        // Защита на кода
-        document.onkeydown = function(e) { if(e.keyCode == 123) return false; }
-    </script>
-</body>
-</html>
+        <div class="logo-area">
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAACXBIWXMAAAsTAAALEwEAmpwYAAAEMElEQVR4nO2dS0hUURjHf+fO6DghSAtbe6AtInoQaREU9SAtatGidpG0atGidpG0atGidpG0atGiNq0iaRE9iB5ESAtbe6AtInoQaREU9SAtatGidpG0atGidpG0atGidpG0atGiNq0iaRE9iB5ESAtbe6AtInoQaREU9SAtatGidpG0atGidpG0atGidpG0atGiNq0iaRE9iB5ESAtbe6AtInoQaREU9SAtatGidpG0atGidpG0atGidpG0atGiNq0iaRE9iB5ESAtbe6AtInoQaREU9SAtatGidpG0atGidpG0atGidpG0atGiNq0iaRE9iB5ESAtbe6AtInoQaREU9SAtatGidpG0atGidpG0atGidpG0atGiNq0iaRE9iB5ESAtbe6AtInoQaREU9SAtatGidpG0atGidpG0atGidpG0atGiNq0iaRE9iB5ESAtbe6AtInoQaREU9SAtatGidpG0atGidpG0atGidpG0atGiNq0iaRE9iB5ESAtbe6AtInoQaREU9SAtatGidpG0atGidpG0atGidpG0atGiNq0iaRE9iB5ESAtbe6AtInoQaREU9SAtatGidpG0atGidpG0atGidpG0atGiNq0iaRE9iB5ESAtbe6AtInoQaREU9SAtatGidpG0atGidpG0atGidpG0atGiNq0iaRE9iB5ESAtbe6AtInoQaREU9SAtatGidpG0atGidpG0atGidpG0atGiNq0iaRE9iB5ESAtbe6AtInoQaREU9SAtatGidpG0atGidpG0atGidpG0atGiNq0iaRE9iB5ESAtbe6AtInoQaREU9SAtatGidpG0atGidpG0atGidpG0atGiNq0iaRE9iB5ESAtbe6AtInoQaREU9SAtatGidpG0atGidpG0atGidpG0atGiNq0iaRE9iB5ESAtbe6AtInoQaREU9SAtatGidpG0atGidpG0atGidpG0atGiNq0iaRE9iB5ESAtbe6AtInoQaREU9SAtatGidpG0atGidpG0atGidpG0atGiNq0iaRE9iB5ESAtbe6AtInoQaREU9SAtatGidpG0atGidpG0atGidpG0atGiNq0iaRE9iB5ESAtbe6AtInoQaREU9SAtatGidpG0atGidpG0atGidpG0atGiNq0iaRE9iB5ESAtbe6AtInoQaREU9SAtatGidpG0atGidpG0atGidpG0atGiNq0iaRE9iB5ESAtbe6AtInoQaREU9SAtatGidpG0atGidpG0atGidpG0atGiNq0iaRE9iB5ESAtbe6AtInoQaREU9SAtatGidpG0atGidpG0atGidpG0atGiNq0iaRE9iB5ESAtbe6AtInoQaREU9SAtatGidpG0atGidpG0atGidpG0atGiNq0iaRE9iB5ESAtbe6AtInoQaREU9SAtatGidpG0atGidpG0atGidpG0atGiNq0iaRE9iB5ESAtbe6AtInoQaREU9SAtatGidpG0atGidpG0atGidpG0atGi
+                
