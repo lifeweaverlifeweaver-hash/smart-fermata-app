@@ -3,52 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SmartFermata | Команден Център</title>
-    <link rel="apple-touch-icon" href="logo.png">
+    <title>SmartFermata Cloud App</title>
+    <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-database-compat.js"></script>
+
     <style>
         :root { --p: #10214a; --s: #27ae60; --bg: #f4f7f6; --crit: #d32f2f; }
-        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: #333; overflow: hidden; }
-
-        /* LOGIN SCREEN */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: #333; }
+        
         #login-screen { position: fixed; inset: 0; background: var(--p); z-index: 5000; display: flex; align-items: center; justify-content: center; }
         .login-card { background: white; padding: 30px; border-radius: 20px; width: 90%; max-width: 350px; text-align: center; }
-        .login-btn { width: 100%; padding: 15px; margin-top: 10px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; color: white; transition: 0.3s; }
         
-        /* HEADER & SIDEBAR */
-        .header { background: var(--p); color: white; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; height: 70px; position: sticky; top: 0; z-index: 1000; }
-        .header img { width: 45px; height: 45px; border-radius: 50%; background: white; border: 1px solid #fff; }
-        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: var(--p); transition: 0.3s; z-index: 2000; }
-        .sidebar.active { left: 0; }
-        .nav-link { width: 100%; background: none; border: none; color: #adb5bd; padding: 15px 25px; text-align: left; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .nav-link.active { color: white; background: rgba(39, 174, 96, 0.2); border-left: 5px solid var(--s); }
-
-        /* CONTENT */
+        .header { background: var(--p); color: white; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; height: 70px; }
+        .header img { width: 45px; border-radius: 50%; background: white; }
+        
         .main { padding: 20px; height: calc(100vh - 70px); overflow-y: auto; }
-        .page { display: none; } .page.active { display: block; }
         .card { background: white; padding: 15px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 15px; border-left: 5px solid var(--s); }
         
-        /* INPUTS */
-        input, select, textarea { width: 100%; padding: 10px; margin: 10px 0; border-radius: 8px; border: 1px solid #ddd; }
-        .btn-save { background: var(--p); color: white; border: none; padding: 10px; border-radius: 8px; width: 100%; cursor: pointer; }
-
-        .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1500; }
-        .overlay.active { display: block; }
+        .btn { width: 100%; padding: 15px; margin-top: 10px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; color: white; }
+        input, select { width: 100%; padding: 10px; margin: 5px 0; border-radius: 8px; border: 1px solid #ddd; }
         
-        /* STATUS TAGS */
-        .status-badge { padding: 3px 8px; border-radius: 12px; font-size: 0.7rem; font-weight: bold; }
-        .low { background: #ffebee; color: var(--crit); }
-        .ok { background: #e8f5e9; color: var(--s); }
+        .nav-link { width: 100%; padding: 15px; background: none; border: none; color: #adb5bd; text-align: left; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: var(--p); transition: 0.3s; z-index: 2000; }
+        .sidebar.active { left: 0; }
     </style>
 </head>
-<body oncontextmenu="return false;">
+<body>
 
     <div id="login-screen">
         <div class="login-card">
-            <img src="logo.png" style="width:80px; margin-bottom:15px; border-radius:50%;">
-            <h2>SmartFermata</h2>
-            <button class="login-btn" style="background:var(--p)" onclick="login('admin')">ВХОД СОБСТВЕНИК</button>
-            <button class="login-btn" style="background:var(--s)" onclick="login('client')">ВХОД КЛИЕНТИ</button>
+            <img src="logo.png" style="width:80px; margin-bottom:15px;">
+            <h2>База Зорница</h2>
+            <button class="btn" style="background:var(--p)" onclick="start('admin')">СОБСТВЕНИК</button>
+            <button class="btn" style="background:var(--s)" onclick="start('client')">КЛИЕНТ</button>
         </div>
     </div>
 
@@ -57,118 +45,97 @@
         <button onclick="toggleM()" style="background:none; border:none; color:white; font-size:30px;">☰</button>
     </header>
 
-    <div class="overlay" id="ov" onclick="toggleM()"></div>
-
     <aside class="sidebar" id="sb">
-        <div style="text-align:center; padding:20px; border-bottom:1px solid rgba(255,255,255,0.1);">
-            <img src="logo.png" style="width:60px; border-radius:50%; background:white;">
-            <h4 id="user-info" style="color:white; margin-top:10px;">Панел</h4>
-        </div>
         <nav id="nav-box"></nav>
-        <button onclick="location.reload()" style="width:100%; color:#ff4d4d; padding:20px; background:none; border:none; text-align:left; cursor:pointer;">✕ Изход</button>
+        <button onclick="location.reload()" style="width:100%; color:#ff4d4d; padding:20px; background:none; border:none; text-align:left;">✕ Изход</button>
     </aside>
 
     <main class="main" id="main-box"></main>
 
     <script>
-        // БАЗА ДАННИ
-        let horses = [
-            { id: 0, name: "Грохот", status: "Свободен", price: "40 лв", food: "07:00 / 19:00", health: "OK" },
-            { id: 1, name: "Звезда", status: "Зает", price: "50 лв", food: "08:00 / 20:00", health: "Ваксинация скоро" }
-        ];
-        let inventory = { hay: 25, oats: 100 };
+        // ТУК СЛОЖИ ТВОИТЕ ДАННИ ОТ FIREBASE
+        const firebaseConfig = {
+            apiKey: "AIzaSyAfkaWtQyWDHL0IXCG4CrpAOX3Nt9pmcpE",
+            authDomain: "smartfermata.firebaseapp.com",
+            databaseURL: "https://ТВОЯТ_ПРОЕКТ.firebaseio.com",
+            projectId: "smartfermata",
+            storageBucket: "smartfermata.firebasestorage.app",
+            messagingSenderId: "638532750076",
+            appId: "1:638532750076:web:71f61dc54b104fb9586579"
+             measurementId: "G-LXFY13M2Q5"
+        };
+        
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
 
-        function login(role) {
+        let currentRole = '';
+
+        function start(role) {
+            currentRole = role;
             document.getElementById('login-screen').style.display = 'none';
-            document.getElementById('user-info').innerText = role === 'admin' ? 'Админ: Цветелина' : 'Клиент';
-            render(role);
+            listenToData();
         }
 
-        function render(role) {
-            const nav = document.getElementById('nav-box');
-            const main = document.getElementById('main-box');
-            nav.innerHTML = ''; main.innerHTML = '';
+        // Слушане за промени в реално време
+        function listenToData() {
+            db.ref('base_data').on('value', (snapshot) => {
+                const data = snapshot.val();
+                renderUI(data);
+            });
+        }
 
-            if(role === 'admin') {
-                // АДМИН ПАНЕЛ
-                addPage('a_stock', '📦 Склад & Управление', `
-                    <h2>Склад</h2>
+        function renderUI(data) {
+            const main = document.getElementById('main-box');
+            const nav = document.getElementById('nav-box');
+            main.innerHTML = ''; nav.innerHTML = '';
+
+            if (currentRole === 'admin') {
+                // АДМИН ПАНЕЛ (ПЪЛЕН ДОСТЪП)
+                main.innerHTML = `
+                    <h2>📦 Склад</h2>
                     <div class="card">
-                        <b>Сено: ${inventory.hay} бали</b> ${inventory.hay < 30 ? '<span class="status-badge low">НИСКО!</span>' : ''}
-                        <input type="number" id="new-hay" placeholder="Промени сено">
-                        <button class="btn-save" onclick="updateStock()">Обнови</button>
+                        <p>Сено: ${data.inventory.hay} бали</p>
+                        <input type="number" id="hay-inp" value="${data.inventory.hay}">
+                        <button class="btn" style="background:var(--p)" onclick="saveStock()">Запази Склад</button>
                     </div>
-                    <h2>Редакция на Коне</h2>
-                    ${horses.map(h => `
+                    <h2>🐎 Коне</h2>
+                    ${data.horses.map((h, i) => `
                         <div class="card">
                             <b>${h.name}</b>
-                            <select id="st-${h.id}"><option ${h.status==='Свободен'?'selected':''}>Свободен</option><option ${h.status==='Зает'?'selected':''}>Зает</option></select>
-                            <input type="text" id="pr-${h.id}" value="${h.price}">
-                            <button class="btn-save" onclick="updateHorse(${h.id})">Запази</button>
+                            <select onchange="updateHorse(${i}, 'status', this.value)">
+                                <option ${h.status==='Свободен'?'selected':''}>Свободен</option>
+                                <option ${h.status==='Зает'?'selected':''}>Зает</option>
+                            </select>
+                            <input type="text" value="${h.price}" onchange="updateHorse(${i}, 'price', this.value)">
+                            <small>Здраве: ${h.health}</small>
                         </div>
                     `).join('')}
-                `);
+                `;
             } else {
-                // КЛИЕНТСКИ ПАНЕЛ С ПЛАЩАНЕ
-                addPage('c_horses', '🐎 Налични Коне', `
-                    <h2>Нашият екип</h2>
-                    ${horses.map(h => `
+                // КЛИЕНТСКИ ПАНЕЛ
+                main.innerHTML = `
+                    <h2>Свободни коне за езда</h2>
+                    ${data.horses.map(h => `
                         <div class="card" style="border-left-color: ${h.status==='Свободен'?'var(--s)':'#ccc'}">
                             <b>${h.name}</b> - ${h.status}<br>
                             <b>Цена: ${h.price}</b>
                         </div>
                     `).join('')}
-                `);
-
-                addPage('c_pay', '💳 Резервация & Плащане', `
-                    <h2>Резервирай час</h2>
-                    <div class="card">
-                        <label>Избери кон:</label>
-                        <select id="p_horse">${horses.filter(h=>h.status==='Свободен').map(h => `<option>${h.name}</option>`).join('')}</select>
-                        <label>Тип услуга:</label>
-                        <select id="p_service">
-                            <option value="40">Обучение на манеж - 40 лв.</option>
-                            <option value="60">Разходка в гората - 60 лв.</option>
-                        </select>
-                        <hr style="margin:10px 0;">
-                        <button class="login-btn" style="background:#0070ba; width:100%;" onclick="processPay()">ПЛАТИ И РЕЗЕРВИРАЙ</button>
-                    </div>
-                `);
+                `;
             }
         }
 
-        function addPage(id, name, content) {
-            const nav = document.getElementById('nav-box');
-            const main = document.getElementById('main-box');
-            const isActive = nav.children.length === 0 ? 'active' : '';
-            nav.innerHTML += `<button class="nav-link ${isActive}" onclick="show('${id}', this)">${name}</button>`;
-            main.innerHTML += `<div id="${id}" class="page ${isActive}">${content}</div>`;
+        // Функции за запис в Облака
+        function saveStock() {
+            const val = document.getElementById('hay-inp').value;
+            db.ref('base_data/inventory/hay').set(parseInt(val));
         }
 
-        // ЛОГИКА ЗА ПЛАЩАНЕ
-        function processPay() {
-            const price = document.getElementById('p_service').value;
-            const horse = document.getElementById('p_horse').value;
-            alert("Пренасочване към защитен терминал за плащане на " + price + " лв. за кон " + horse);
-            // Тук сложи твоя PayPal линк
-            window.location.href = "https://www.paypal.com/paypalme/ТВОЯТ_ПРОФИЛ/" + price;
+        function updateHorse(index, field, value) {
+            db.ref('base_data/horses/' + index + '/' + field).set(value);
         }
 
-        function updateStock() { inventory.hay = document.getElementById('new-hay').value || inventory.hay; render('admin'); }
-        function updateHorse(id) { 
-            horses[id].status = document.getElementById('st-'+id).value; 
-            horses[id].price = document.getElementById('pr-'+id).value; 
-            render('admin'); 
-        }
-
-        function toggleM() { document.getElementById('sb').classList.toggle('active'); document.getElementById('ov').classList.toggle('active'); }
-        function show(id, btn) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-            btn.classList.add('active');
-            if(window.innerWidth < 769) toggleM();
-        }
+        function toggleM() { document.getElementById('sb').classList.toggle('active'); }
     </script>
 </body>
 </html>
