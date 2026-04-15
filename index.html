@@ -3,190 +3,131 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SmartFermata | Управление на Конна База</title>
+    <title>SmartFermata | Конна База Зорница</title>
     <style>
-        :root { --dark: #10214a; --green: #27ae60; --bg: #f4f7f6; --text: #333; }
+        :root { --p: #10214a; --s: #27ae60; --bg: #f4f7f6; --w: #ffffff; }
         * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; }
-        body { font-family: 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); overflow: hidden; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: #333; }
 
-        /* HEADER */
-        .header { background: var(--dark); color: white; padding: 0 15px; display: flex; justify-content: space-between; align-items: center; height: 70px; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
-        .brand { display: flex; align-items: center; gap: 12px; }
-        .brand img { width: 45px; height: 45px; border-radius: 50%; border: 2px solid white; background: white; object-fit: cover; }
-        .menu-toggle { background: none; border: none; color: white; font-size: 28px; cursor: pointer; padding: 5px; }
+        /* ВХОДНА СТРАНИЦА */
+        #login-screen { position: fixed; inset: 0; background: var(--p); z-index: 5000; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; }
+        .login-card { background: white; padding: 30px; border-radius: 20px; width: 90%; max-width: 350px; text-align: center; color: #333; }
+        .login-card img { width: 80px; margin-bottom: 15px; border-radius: 50%; border: 2px solid var(--p); }
+        .login-btn { width: 100%; padding: 15px; margin-top: 10px; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 16px; }
+        .btn-admin { background: var(--p); color: white; }
+        .btn-client { background: var(--s); color: white; }
 
-        /* SIDEBAR */
-        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: var(--dark); transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 2000; padding-top: 20px; box-shadow: 5px 0 15px rgba(0,0,0,0.3); }
+        /* HEADER & LAYOUT */
+        .header { background: var(--p); color: white; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; height: 70px; position: sticky; top: 0; z-index: 1000; }
+        .header img { width: 40px; height: 40px; border-radius: 50%; background: white; }
+        
+        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: var(--p); transition: 0.3s; z-index: 2000; padding-top: 20px; }
         .sidebar.active { left: 0; }
-        .sb-profile { text-align: center; padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 10px; }
-        .sb-profile img { width: 90px; height: 90px; border-radius: 50%; border: 3px solid var(--green); margin-bottom: 10px; background: white; }
-        .sb-profile h3 { color: white; font-size: 1.1rem; }
+        .nav-link { width: 100%; background: none; border: none; color: #adb5bd; padding: 15px 25px; text-align: left; font-size: 16px; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .nav-link.active { color: white; background: rgba(39, 174, 96, 0.2); border-left: 5px solid var(--s); }
 
-        .nav-link { width: 100%; background: none; border: none; color: #adb5bd; padding: 15px 25px; text-align: left; font-size: 16px; cursor: pointer; display: flex; align-items: center; gap: 15px; transition: 0.2s; }
-        .nav-link:hover { background: rgba(255,255,255,0.05); color: white; }
-        .nav-link.active { color: white; background: rgba(39, 174, 96, 0.2); border-left: 5px solid var(--green); }
-
-        /* MAIN CONTENT */
-        .main { padding: 20px; height: calc(100vh - 70px); overflow-y: auto; scroll-behavior: smooth; }
-        .page { display: none; animation: fadeIn 0.4s ease; }
+        /* CONTENT */
+        .main { padding: 20px; height: calc(100vh - 70px); overflow-y: auto; }
+        .page { display: none; }
         .page.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .card { background: white; padding: 15px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 15px; border-left: 5px solid var(--s); }
+        .admin-only { border-left-color: #d32f2f; }
+        
+        h2 { margin-bottom: 15px; color: var(--p); font-size: 1.3rem; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .stat { background: #eee; padding: 10px; border-radius: 8px; text-align: center; }
+        .stat b { display: block; font-size: 1.2rem; }
 
-        h1 { font-size: 1.5rem; margin-bottom: 5px; color: var(--dark); }
-        .subtitle { color: #666; margin-bottom: 25px; font-size: 0.9rem; }
-
-        /* CARDS */
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; margin-bottom: 25px; }
-        .card { background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-top: 4px solid var(--green); }
-        .card small { color: #888; font-size: 0.8rem; }
-        .card .val { font-size: 1.6rem; font-weight: bold; color: var(--dark); margin-top: 5px; }
-
-        /* LISTS / TABLES */
-        .list-item { background: white; padding: 15px; border-radius: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.03); }
-        .status { padding: 4px 8px; border-radius: 5px; font-size: 0.75rem; font-weight: bold; }
-        .status.ok { background: #e8f5e9; color: #2e7d32; }
-        .status.warn { background: #fff3e0; color: #ef6c00; }
-
-        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1500; backdrop-filter: blur(2px); }
+        .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1500; }
         .overlay.active { display: block; }
     </style>
 </head>
 <body oncontextmenu="return false;">
 
-    <header class="header">
-        <div class="brand">
+    <div id="login-screen">
+        <div class="login-card">
             <img src="logo.png" alt="Logo">
-            <b>SmartFermata</b>
+            <h3>Добре дошли в SmartFermata</h3>
+            <p style="margin-bottom: 20px; font-size: 0.9rem;">Изберете режим на достъп:</p>
+            <button class="login-btn btn-admin" onclick="login('admin')">ВХОД АДМИНИСТРАТОР</button>
+            <button class="login-btn btn-client" onclick="login('client')">ВХОД КЛИЕНТ</button>
         </div>
-        <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+    </div>
+
+    <header class="header">
+        <div style="display:flex; align-items:center; gap:10px;">
+            <img src="logo.png" alt="Logo">
+            <b id="user-title">SmartFermata</b>
+        </div>
+        <button onclick="toggleM()" style="background:none; border:none; color:white; font-size:30px;">☰</button>
     </header>
 
-    <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+    <div class="overlay" id="ov" onclick="toggleM()"></div>
 
-    <aside class="sidebar" id="sidebar">
-        <div class="sb-profile">
-            <img src="logo.png" alt="Admin">
-            <h3>Администратор</h3>
-            <p style="color: var(--green); font-size: 0.8rem;">База "Зорница"</p>
+    <aside class="sidebar" id="sb">
+        <div style="text-align:center; padding:20px; border-bottom:1px solid rgba(255,255,255,0.1);">
+            <img src="logo.png" style="width:70px; border-radius:50%; background:white; border:2px solid var(--s);">
+            <h4 id="menu-name" style="color:white; margin-top:10px;">Панел</h4>
         </div>
-        <nav>
-            <button class="nav-link active" onclick="showPage('dash', this)">📊 Табло</button>
-            <button class="nav-link" onclick="showPage('horses', this)">🐎 Регистър Коне</button>
-            <button class="nav-link" onclick="showPage('health', this)">🩺 Здраве & Вет</button>
-            <button class="nav-link" onclick="showPage('schedule', this)">📅 График</button>
-            <button class="nav-link" onclick="showPage('finance', this)">💰 Плащания</button>
-            <button class="nav-link" onclick="showPage('settings', this)">⚙️ Настройки</button>
-        </nav>
+        <nav id="nav-container">
+            </nav>
+        <button onclick="location.reload()" style="width:100%; color:#ff4444; padding:20px; background:none; border:none; text-align:left;">✕ Изход</button>
     </aside>
 
-    <main class="main">
-        <div id="dash" class="page active">
-            <h1>Здравейте, Цветелина! 👋</h1>
-            <p class="subtitle">Дневен отчет за конна база</p>
-            <div class="grid">
-                <div class="card"><small>Спестени такси</small><div class="val">144 €</div></div>
-                <div class="card"><small>Активни Коне</small><div class="val">12</div></div>
-                <div class="card"><small>Дневен приход</small><div class="val">480 €</div></div>
-                <div class="card"><small>Предстоящи уроци</small><div class="val">5</div></div>
-            </div>
-            <h3>Бърз преглед</h3>
-            <div class="list-item">
-                <div><b>Тренировка: Арабски жребец</b><br><small>14:00 - Манеж 1</small></div>
-                <span class="status ok">Потвърдено</span>
-            </div>
-        </div>
-
-        <div id="horses" class="page">
-            <h1>🐎 Регистър Коне</h1>
-            <p class="subtitle">Списък и информация за всички коне</p>
-            <div class="list-item">
-                <div><b>Грохот</b><br><small>Жребец, 7г. (Арабска)</small></div>
-                <span class="status ok">В кондиция</span>
-            </div>
-            <div class="list-item">
-                <div><b>Звезда</b><br><small>Кобила, 5г. (Чистокръвна)</small></div>
-                <span class="status ok">В кондиция</span>
-            </div>
-        </div>
-
-        <div id="health" class="page">
-            <h1>🩺 Здраве и Ветеринар</h1>
-            <p class="subtitle">Ваксини, обезпаразитяване и прегледи</p>
-            <div class="card" style="margin-bottom: 15px;">
-                <b>Следваща ваксинация</b>
-                <div class="val" style="color: #ef6c00; font-size: 1.2rem;">След 12 дни</div>
-                <small>Всички коне в Сектор А</small>
-            </div>
-            <div class="list-item">
-                <div><b>Обезпаразитяване - Грохот</b><br><small>Последно: 12.01.2026</small></div>
-                <span class="status ok">Изпълнено</span>
-            </div>
-        </div>
-
-        <div id="schedule" class="page">
-            <h1>📅 График на тренировките</h1>
-            <p class="subtitle">Разпределение на часове и ездачи</p>
-            <div class="list-item">
-                <div><b>09:00 - Индивидуален урок</b><br><small>Ездач: Иван Иванов</small></div>
-            </div>
-            <div class="list-item">
-                <div><b>11:00 - Групова езда</b><br><small>3-ма ездачи, Манеж 2</small></div>
-            </div>
-        </div>
-
-        <div id="finance" class="page">
-            <h1>💰 Финанси и такси</h1>
-            <p class="subtitle">Управление на плащания от клиенти</p>
-            <div class="card" style="border-top-color: var(--dark);">
-                <small>Общ баланс за месеца</small>
-                <div class="val">3,240 €</div>
-            </div>
-            <br>
-            <div class="list-item">
-                <div><b>Месечен абонамент - С. Петров</b><br><small>Карта 10 посещения</small></div>
-                <span class="status ok">Платено</span>
-            </div>
-        </div>
-
-        <div id="settings" class="page">
-            <h1>⚙️ Настройки</h1>
-            <p class="subtitle">Профил и системни опции</p>
-            <div class="list-item"><b>Лични данни</b><span>➔</span></div>
-            <div class="list-item"><b>Известия за ваксини</b><span>Вкл.</span></div>
-            <div class="list-item" style="color: #d32f2f;"><b>Изход</b></div>
-        </div>
-    </main>
+    <main class="main" id="content-container">
+        </main>
 
     <script>
-        // Функция за навигация
-        function showPage(pageId, btn) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById(pageId).classList.add('active');
-            
-            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-            btn.classList.add('active');
-            
-            if (window.innerWidth < 769) toggleMenu();
-            document.querySelector('.main').scrollTop = 0;
-        }
-
-        // Меню отваряне/затваряне
-        function toggleMenu() {
-            document.getElementById('sidebar').classList.toggle('active');
-            document.getElementById('overlay').classList.toggle('active');
-        }
-
-        // --- ЗАЩИТА НА КОДА ---
-        document.onkeydown = function(e) {
-            if (e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74)) || (e.ctrlKey && e.keyCode == 85)) {
-                return false;
-            }
+        const data = {
+            admin: [
+                { id: 'a_dash', n: '📊 Табло Управление', c: `<h2>Общ преглед на базата</h2><div class="grid"><div class="stat"><b>12</b>Коне</div><div class="stat"><b>4</b>Работника</div><div class="stat"><b>480€</b>Приход днес</div><div class="stat"><b>100%</b>Фураж</div></div>` },
+                { id: 'a_horses', n: '🐎 Регистър & Хранене', c: `<h2>Списък Коне</h2><div class="card"><b>Грохот (Жребец)</b><br>Хранене: 07:00 / 13:00 / 19:00<br>Дажба: Сено 5кг, Овес 2кг</div><div class="card"><b>Звезда (Кобила)</b><br>Специален режим: Добавки за стави</div>` },
+                { id: 'a_vet', n: '🩺 Ветеринар & Здраве', c: `<h2>Медицински картони</h2><div class="card admin-only"><b>Ваксинация:</b> Предстои за 5 коня на 20.04<br><b>Ветеринар:</b> Д-р Иванов (0888 123 456)</div>` },
+                { id: 'a_staff', n: '👥 Работници & Смени', c: `<h2>Персонал</h2><div class="card"><b>Иван (Главен Гледач)</b><br>Смяна: 06:00 - 18:00<br>Задачи: Почистване на боксове</div>` }
+            ],
+            client: [
+                { id: 'c_dash', n: '🏠 Начало', c: `<h2>Добре дошли в Зорница!</h2><div class="card">Насладете се на професионално обучение и разходки сред природата.</div>` },
+                { id: 'c_prices', n: '💰 Цени & Услуги', c: `<h2>Услуги</h2><div class="card"><b>Индивидуално обучение</b><br>Цена: 40 лв. / 45 мин.</div><div class="card"><b>Разходка в гората</b><br>Цена: 50 лв. / 60 мин.</div>` },
+                { id: 'c_status', n: '🐎 Свободни Коне', c: `<h2>Коне за езда днес</h2><div class="card" style="border-left-color:var(--s)"><b>Звезда</b> - Свободна (Подходяща за начинаещи)</div><div class="card" style="border-left-color:var(--s)"><b>Вихър</b> - Свободен (За напреднали)</div>` }
+            ]
         };
 
-        // Затрудняване на инспекцията чрез debugger
-        setInterval(function() {
-            (function() { return false; }['constructor']('debugger')['call']());
-        }, 50);
+        function login(role) {
+            document.getElementById('login-screen').style.display = 'none';
+            const nav = document.getElementById('nav-container');
+            const content = document.getElementById('content-container');
+            const items = data[role];
+
+            document.getElementById('user-title').innerText = role === 'admin' ? 'Админ Панел' : 'Клиентски Панел';
+            document.getElementById('menu-name').innerText = role === 'admin' ? 'Цветелина (Админ)' : 'Гост';
+
+            nav.innerHTML = '';
+            content.innerHTML = '';
+
+            items.forEach((item, index) => {
+                nav.innerHTML += `<button class="nav-link ${index===0?'active':''}" onclick="show('${item.id}', this)">${item.n}</button>`;
+                content.innerHTML += `<div id="${item.id}" class="page ${index===0?'active':''}">${item.c}</div>`;
+            });
+        }
+
+        function toggleM() {
+            document.getElementById('sb').classList.toggle('active');
+            document.getElementById('ov').classList.toggle('active');
+        }
+
+        function show(id, btn) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            btn.classList.add('active');
+            if(window.innerWidth < 769) toggleM();
+        }
+
+        // ЗАЩИТА
+        document.onkeydown = (e) => {
+            if (e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74)) || (e.ctrlKey && e.keyCode == 85)) return false;
+        };
+        setInterval(() => { (function(){return false}['constructor']('debugger')['call']()); }, 50);
     </script>
 </body>
 </html>
