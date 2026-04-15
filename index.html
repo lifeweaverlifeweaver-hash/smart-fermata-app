@@ -78,4 +78,99 @@
         // ИНИЦИАЛИЗАЦИЯ НА ПАМЕТТА (LocalStorage)
         let state = JSON.parse(localStorage.getItem('fermata_data')) || {
             horses: [
-                { name: "Грохот", status: "Свободен", price: "40 лв.", food: "0
+                { name: "Грохот", status: "Свободен", price: "40 лв.", food: "07:00 Сено / 19:00 Овес" },
+                { name: "Звезда", status: "Зает", price: "50 лв.", food: "08:00 Сено / 20:00 Овес" }
+            ],
+            stock: { hay: 80, oats: 50 },
+            role: 'client'
+        };
+
+        function saveData() {
+            localStorage.setItem('fermata_data', JSON.stringify(state));
+        }
+
+        function startApp(role) {
+            state.role = role;
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('user-role').innerText = role === 'admin' ? 'Админ: Цветелина' : 'Клиентски Достъп';
+            document.getElementById('title-tag').innerText = role === 'admin' ? 'Owner Panel' : 'SmartFermata';
+            render();
+        }
+
+        function render() {
+            const nav = document.getElementById('nav-box');
+            const main = document.getElementById('main-box');
+            nav.innerHTML = ''; main.innerHTML = '';
+
+            if(state.role === 'admin') {
+                // ПАНЕЛ СОБСТВЕНИК
+                addPage('a_horses', '🐎 Управление Коне', `
+                    <h2>Коригирай Коне и Цени</h2>
+                    ${state.horses.map((h, i) => `
+                        <div class="card">
+                            <button class="del-btn" style="float:right" onclick="deleteHorse(${i})">Триене ✕</button>
+                            <b>${h.name}</b>
+                            <input type="text" value="${h.name}" onchange="editHorse(${i}, 'name', this.value)" placeholder="Име">
+                            <select onchange="editHorse(${i}, 'status', this.value)">
+                                <option ${h.status==='Свободен'?'selected':''}>Свободен</option>
+                                <option ${h.status==='Зает'?'selected':''}>Зает</option>
+                            </select>
+                            <input type="text" value="${h.price}" onchange="editHorse(${i}, 'price', this.value)" placeholder="Цена">
+                            <input type="text" value="${h.food}" onchange="editHorse(${i}, 'food', this.value)" placeholder="График Хранене">
+                        </div>
+                    `).join('')}
+                    <button class="save-btn" onclick="addHorse()">+ Добави Нов Кон</button>
+                `);
+
+                addPage('a_stock', '📦 Склад & Поръчки', `
+                    <h2>Наличност Храна</h2>
+                    <div class="card" style="border-left-color: ${state.stock.hay < 30 ? 'var(--crit)' : 'var(--s)'}">
+                        <b>Сено: ${state.stock.hay} бали</b>
+                        <input type="number" value="${state.stock.hay}" onchange="editStock('hay', this.value)">
+                        ${state.stock.hay < 30 ? '<p class="crit">НИСКО НИВО!</p>' : ''}
+                        <a href="viber://forward?text=Поръчка на СЕНО за база Зорница!" class="notify-btn viber">Поръчай през Viber</a>
+                    </div>
+                `);
+            } else {
+                // ПАНЕЛ КЛИЕНТИ
+                addPage('c_home', '🏠 Начало', `<h2>Добре дошли в Зорница!</h2><div class="card">Вашето място за професионална езда.</div>`);
+                addPage('c_list', '🐎 Свободни Коне', `
+                    <h2>Свободни за езда днес</h2>
+                    ${state.horses.map(h => `
+                        <div class="card" style="border-left-color: ${h.status==='Свободен'?'var(--s)':'#ccc'}">
+                            <b>${h.name}</b> - ${h.status}<br>
+                            <small>Цена: ${h.price}</small>
+                        </div>
+                    `).join('')}
+                `);
+            }
+        }
+
+        function addPage(id, name, content) {
+            const nav = document.getElementById('nav-box');
+            const main = document.getElementById('main-box');
+            const isActive = nav.children.length === 0 ? 'active' : '';
+            nav.innerHTML += `<button class="nav-link ${isActive}" onclick="show('${id}', this)">${name}</button>`;
+            main.innerHTML += `<div id="${id}" class="page ${isActive}">${content}</div>`;
+        }
+
+        // ФУНКЦИИ ЗА ПРОМЯНА (OWNER)
+        function editHorse(i, field, val) { state.horses[i][field] = val; saveData(); }
+        function addHorse() { state.horses.push({name: "Нов Кон", status: "Свободен", price: "0 лв.", food: ""}); saveData(); render(); }
+        function deleteHorse(i) { state.horses.splice(i, 1); saveData(); render(); }
+        function editStock(f, v) { state.stock[f] = parseInt(v); saveData(); render(); }
+
+        function toggleM() { document.getElementById('sb').classList.toggle('active'); document.getElementById('ov').classList.toggle('active'); }
+        function show(id, btn) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            btn.classList.add('active');
+            if(window.innerWidth < 769) toggleM();
+        }
+
+        // ЗАЩИТА СРЕЩУ КОПИРАНЕ
+        document.onkeydown = (e) => { if(e.keyCode==123 || (e.ctrlKey && e.shiftKey && (e.keyCode==73 || e.keyCode==74)) || (e.ctrlKey && e.keyCode==85)) return false; };
+    </script>
+</body>
+</html>
