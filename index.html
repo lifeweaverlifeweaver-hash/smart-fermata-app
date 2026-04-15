@@ -3,40 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SmartFermata Cloud App</title>
+    <title>SmartFermata | Конна База</title>
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="logo.png">
+
     <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-database-compat.js"></script>
 
     <style>
-        :root { --p: #10214a; --s: #27ae60; --bg: #f4f7f6; --crit: #d32f2f; }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: #333; }
-        
+        :root { --p: #10214a; --s: #27ae60; --bg: #f4f7f6; --crit: #d32f2f; --w: #ffffff; }
+        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: #333; overflow: hidden; }
+
+        /* ВХОД */
         #login-screen { position: fixed; inset: 0; background: var(--p); z-index: 5000; display: flex; align-items: center; justify-content: center; }
-        .login-card { background: white; padding: 30px; border-radius: 20px; width: 90%; max-width: 350px; text-align: center; }
+        .login-card { background: white; padding: 30px; border-radius: 20px; width: 90%; max-width: 350px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .btn { width: 100%; padding: 15px; margin-top: 10px; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; color: white; transition: 0.3s; }
+
+        /* ИНТЕРФЕЙС */
+        .header { background: var(--p); color: white; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; height: 70px; position: sticky; top: 0; z-index: 1000; }
+        .header img { width: 45px; height: 45px; border-radius: 50%; background: white; }
         
-        .header { background: var(--p); color: white; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; height: 70px; }
-        .header img { width: 45px; border-radius: 50%; background: white; }
-        
-        .main { padding: 20px; height: calc(100vh - 70px); overflow-y: auto; }
-        .card { background: white; padding: 15px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 15px; border-left: 5px solid var(--s); }
-        
-        .btn { width: 100%; padding: 15px; margin-top: 10px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; color: white; }
-        input, select { width: 100%; padding: 10px; margin: 5px 0; border-radius: 8px; border: 1px solid #ddd; }
-        
-        .nav-link { width: 100%; padding: 15px; background: none; border: none; color: #adb5bd; text-align: left; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.05); }
         .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: var(--p); transition: 0.3s; z-index: 2000; }
         .sidebar.active { left: 0; }
+        .nav-link { width: 100%; background: none; border: none; color: #adb5bd; padding: 15px 25px; text-align: left; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .nav-link.active { color: white; background: rgba(39, 174, 96, 0.2); border-left: 5px solid var(--s); }
+
+        .main { padding: 20px; height: calc(100vh - 70px); overflow-y: auto; }
+        .page { display: none; } .page.active { display: block; }
+        
+        /* КАРТИ */
+        .card { background: white; padding: 15px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 15px; border-left: 5px solid var(--s); }
+        .admin-card { border-left-color: var(--p); }
+        
+        input, select, textarea { width: 100%; padding: 10px; margin: 8px 0; border-radius: 8px; border: 1px solid #ddd; background: #fafafa; }
+        .status-badge { padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+        .low { background: #ffebee; color: var(--crit); }
+        .ok { background: #e8f5e9; color: var(--s); }
+
+        .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1500; }
+        .overlay.active { display: block; }
     </style>
 </head>
 <body>
 
     <div id="login-screen">
         <div class="login-card">
-            <img src="logo.png" style="width:80px; margin-bottom:15px;">
-            <h2>База Зорница</h2>
-            <button class="btn" style="background:var(--p)" onclick="start('admin')">СОБСТВЕНИК</button>
-            <button class="btn" style="background:var(--s)" onclick="start('client')">КЛИЕНТ</button>
+            <img src="logo.png" style="width:100px; margin-bottom:20px; border-radius:50%;">
+            <h2 style="margin-bottom:10px;">SmartFermata</h2>
+            <button class="btn" style="background:var(--p)" onclick="initApp('admin')">ВХОД СОБСТВЕНИК</button>
+            <button class="btn" style="background:var(--s)" onclick="initApp('client')">ВХОД КЛИЕНТИ</button>
         </div>
     </div>
 
@@ -45,7 +63,12 @@
         <button onclick="toggleM()" style="background:none; border:none; color:white; font-size:30px;">☰</button>
     </header>
 
+    <div class="overlay" id="ov" onclick="toggleM()"></div>
+
     <aside class="sidebar" id="sb">
+        <div style="text-align:center; padding:20px; border-bottom:1px solid rgba(255,255,255,0.1);">
+            <h4 id="user-display" style="color:white;">Зареждане...</h4>
+        </div>
         <nav id="nav-box"></nav>
         <button onclick="location.reload()" style="width:100%; color:#ff4d4d; padding:20px; background:none; border:none; text-align:left;">✕ Изход</button>
     </aside>
@@ -53,34 +76,36 @@
     <main class="main" id="main-box"></main>
 
     <script>
-        // ТУК СЛОЖИ ТВОИТЕ ДАННИ ОТ FIREBASE
+        // --- КОНФИГУРАЦИЯ FIREBASE ---
+        // ЗАМЕНИ ТЕЗИ ДАННИ С ТВОИТЕ ОТ СНИМКА 7!
         const firebaseConfig = {
-            apiKey: "AIzaSyAfkaWtQyWDHL0IXCG4CrpAOX3Nt9pmcpE",
-            authDomain: "smartfermata.firebaseapp.com",
+            apiKey: "ТВОЯТ_API_KEY",
+            authDomain: "ТВОЯТ_ПРОЕКТ.firebaseapp.com",
             databaseURL: "https://ТВОЯТ_ПРОЕКТ.firebaseio.com",
-            projectId: "smartfermata",
-            storageBucket: "smartfermata.firebasestorage.app",
-            messagingSenderId: "638532750076",
-            appId: "1:638532750076:web:71f61dc54b104fb9586579"
-             measurementId: "G-LXFY13M2Q5"
+            projectId: "ТВОЯТ_ПРОЕКТ",
+            storageBucket: "ТВОЯТ_ПРОЕКТ.appspot.com",
+            messagingSenderId: "123456789",
+            appId: "1:12345:web:abcdef"
         };
-        
+
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
+        let userRole = '';
 
-        let currentRole = '';
-
-        function start(role) {
-            currentRole = role;
+        function initApp(role) {
+            userRole = role;
             document.getElementById('login-screen').style.display = 'none';
-            listenToData();
-        }
-
-        // Слушане за промени в реално време
-        function listenToData() {
-            db.ref('base_data').on('value', (snapshot) => {
+            document.getElementById('user-display').innerText = role === 'admin' ? 'Админ: Цветелина' : 'Клиент';
+            
+            // Слушане за промени в реално време от облака
+            db.ref('smart_fermata').on('value', (snapshot) => {
                 const data = snapshot.val();
-                renderUI(data);
+                if (!data) {
+                    // Ако базата е празна, създай начални данни
+                    seedDatabase();
+                } else {
+                    renderUI(data);
+                }
             });
         }
 
@@ -89,53 +114,92 @@
             const nav = document.getElementById('nav-box');
             main.innerHTML = ''; nav.innerHTML = '';
 
-            if (currentRole === 'admin') {
-                // АДМИН ПАНЕЛ (ПЪЛЕН ДОСТЪП)
-                main.innerHTML = `
-                    <h2>📦 Склад</h2>
-                    <div class="card">
-                        <p>Сено: ${data.inventory.hay} бали</p>
-                        <input type="number" id="hay-inp" value="${data.inventory.hay}">
-                        <button class="btn" style="background:var(--p)" onclick="saveStock()">Запази Склад</button>
+            if (userRole === 'admin') {
+                // ПАНЕЛ СОБСТВЕНИК
+                addPage('a_stock', '📦 Склад & Здраве', `
+                    <h2>Наличност Склад</h2>
+                    <div class="card admin-card">
+                        <b>Сено: ${data.stock.hay} бали</b> ${data.stock.hay < 30 ? '<span class="status-badge low">НИСКО!</span>' : ''}
+                        <input type="number" id="new-hay" placeholder="Промени количество">
+                        <button class="btn" style="background:var(--p)" onclick="updateDb('stock/hay', document.getElementById('new-hay').value)">Обнови Склада</button>
                     </div>
-                    <h2>🐎 Коне</h2>
+                    <h2>Здраве & Ветеринар</h2>
                     ${data.horses.map((h, i) => `
-                        <div class="card">
+                        <div class="card admin-card">
                             <b>${h.name}</b>
-                            <select onchange="updateHorse(${i}, 'status', this.value)">
+                            <textarea onchange="updateDb('horses/${i}/health', this.value)">${h.health}</textarea>
+                            <small>Последен преглед: ${h.lastCheck}</small>
+                        </div>
+                    `).join('')}
+                `);
+
+                addPage('a_control', '⚙️ Цени & Статус', `
+                    <h2>Контрол за Клиенти</h2>
+                    ${data.horses.map((h, i) => `
+                        <div class="card admin-card">
+                            <b>${h.name}</b>
+                            <select onchange="updateDb('horses/${i}/status', this.value)">
                                 <option ${h.status==='Свободен'?'selected':''}>Свободен</option>
                                 <option ${h.status==='Зает'?'selected':''}>Зает</option>
                             </select>
-                            <input type="text" value="${h.price}" onchange="updateHorse(${i}, 'price', this.value)">
-                            <small>Здраве: ${h.health}</small>
+                            <input type="text" value="${h.price}" onchange="updateDb('horses/${i}/price', this.value)">
                         </div>
                     `).join('')}
-                `;
+                `);
             } else {
                 // КЛИЕНТСКИ ПАНЕЛ
-                main.innerHTML = `
-                    <h2>Свободни коне за езда</h2>
+                addPage('c_main', '🐎 Коне', `
+                    <h2>Налични за езда днес</h2>
                     ${data.horses.map(h => `
                         <div class="card" style="border-left-color: ${h.status==='Свободен'?'var(--s)':'#ccc'}">
-                            <b>${h.name}</b> - ${h.status}<br>
+                            <b>${h.name}</b> - <span class="status-badge ${h.status==='Свободен'?'ok':'low'}">${h.status}</span><br>
                             <b>Цена: ${h.price}</b>
                         </div>
                     `).join('')}
-                `;
+                `);
+
+                addPage('c_pay', '💳 Резервирай', `
+                    <h2>Онлайн Резервация</h2>
+                    <div class="card">
+                        <label>Избери кон:</label>
+                        <select id="p_h">${data.horses.filter(h=>h.status==='Свободен').map(h=>`<option>${h.name}</option>`)}</select>
+                        <button class="btn" style="background:#0070ba" onclick="alert('Пренасочване към плащане...')">ПЛАТИ С КАРТА</button>
+                    </div>
+                `);
             }
         }
 
-        // Функции за запис в Облака
-        function saveStock() {
-            const val = document.getElementById('hay-inp').value;
-            db.ref('base_data/inventory/hay').set(parseInt(val));
+        function addPage(id, name, html) {
+            const nav = document.getElementById('nav-box');
+            const main = document.getElementById('main-box');
+            const active = nav.children.length === 0 ? 'active' : '';
+            nav.innerHTML += `<button class="nav-link ${active}" onclick="show('${id}', this)">${name}</button>`;
+            main.innerHTML += `<div id="${id}" class="page ${active}">${html}</div>`;
         }
 
-        function updateHorse(index, field, value) {
-            db.ref('base_data/horses/' + index + '/' + field).set(value);
+        function updateDb(path, value) {
+            db.ref('smart_fermata/' + path).set(value);
         }
 
-        function toggleM() { document.getElementById('sb').classList.toggle('active'); }
+        function seedDatabase() {
+            const initial = {
+                stock: { hay: 50, oats: 100 },
+                horses: [
+                    { name: "Грохот", status: "Свободен", price: "40 лв", health: "В отлично състояние", lastCheck: "10.04.2026" },
+                    { name: "Звезда", status: "Зает", price: "50 лв", health: "Нужда от нови подкови", lastCheck: "05.04.2026" }
+                ]
+            };
+            db.ref('smart_fermata').set(initial);
+        }
+
+        function toggleM() { document.getElementById('sb').classList.toggle('active'); document.getElementById('ov').classList.toggle('active'); }
+        function show(id, btn) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            btn.classList.add('active');
+            if(window.innerWidth < 769) toggleM();
+        }
     </script>
 </body>
 </html>
