@@ -3,29 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SmartFermata | Цветелина</title>
+    <title>SmartFermata | Secure Admin</title>
     <style>
         :root { --dark: #10214a; --green: #27ae60; --bg: #f4f7f6; }
-        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); }
+        /* Забрана за маркиране на текст */
+        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); overflow-x: hidden; }
 
-        /* HEADER */
         .header { background: var(--dark); color: white; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; height: 70px; }
         .logo-area { display: flex; align-items: center; gap: 10px; }
-        
-        /* ТВОЕТО ЛОГО */
         .main-logo { width: 50px; height: 50px; border-radius: 50%; background: white; border: 2px solid white; object-fit: cover; }
 
-        /* SIDEBAR */
         .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: var(--dark); transition: 0.3s; z-index: 1100; padding-top: 20px; }
         .sidebar.active { left: 0; }
         .sb-header { text-align: center; padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); }
-        .sb-logo { width: 120px; height: 1200px; max-height: 120px; border-radius: 50%; background: white; margin-bottom: 10px; object-fit: cover; }
+        .sb-logo { width: 100px; height: 100px; border-radius: 50%; background: white; margin-bottom: 10px; object-fit: cover; }
 
         .nav-btn { width: 100%; background: none; border: none; color: #adb5bd; padding: 18px 25px; text-align: left; font-size: 16px; cursor: pointer; display: flex; align-items: center; gap: 12px; }
         .nav-btn.active { color: white; background: rgba(255,255,255,0.1); border-left: 4px solid var(--green); }
 
-        /* CONTENT */
         .main { padding: 20px; }
         .page { display: none; }
         .page.active { display: block; }
@@ -36,9 +32,7 @@
         .overlay.active { display: block; }
     </style>
 </head>
-<body>
-
-    <header class="header">
+<body oncontextmenu="return false;"> <header class="header">
         <div class="logo-area">
             <img src="https://i.ibb.co/VpXhM2N/1000021168.png" class="main-logo" alt="Logo">
             <b style="font-size: 1.2rem;">SmartFermata</b>
@@ -62,17 +56,17 @@
 
     <main class="main">
         <div id="d" class="page active">
-            <h1>Здравейте, Цветелина!</h1>
-            <p style="color:#888; margin-bottom:20px;">Управление на база "Зорница"</p>
+            <h1>Здравейте, Цветелина! 👋</h1>
+            <p style="color:#888; margin-bottom:20px;">Конна База "Зорница"</p>
             <div class="card"><small>Спестени такси</small><div class="val">144 €</div></div>
             <div class="card" style="border-top-color:var(--dark)"><small>Дневен Оборот</small><div class="val">480 €</div></div>
         </div>
-
-        <div id="h" class="page"><h1>🐎 График Коне</h1><div class="card">Всички коне са заредени.</div></div>
-        <div id="f" class="page"><h1>💰 Финанси</h1><div class="card">Статистика за деня.</div></div>
+        <div id="h" class="page"><h1>🐎 График Коне</h1><div class="card">Всички данни са защитени.</div></div>
+        <div id="f" class="page"><h1>💰 Финанси</h1><div class="card">Криптиран отчет.</div></div>
     </main>
 
     <script>
+        // ЛОГИКА МЕНЮ
         function t() {
             document.getElementById('sb').classList.toggle('active');
             document.getElementById('ov').classList.toggle('active');
@@ -84,7 +78,24 @@
             btn.classList.add('active');
             if(window.innerWidth < 769) t();
         }
+
+        // --- ЗАЩИТА НА КОДА ---
+        // 1. Блокиране на клавишни комбинации
+        document.addEventListener('keydown', function(e) {
+            if (e.keyCode == 123 || 
+                (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74)) || 
+                (e.ctrlKey && e.keyCode == 85)) {
+                e.preventDefault();
+                return false;
+            }
+        });
+
+        // 2. Анти-Дебъгер (Затруднява отварянето на конзолата)
+        setInterval(function() {
+            (function() {
+                return false;
+            }['constructor']('debugger')['call']());
+        }, 100);
     </script>
 </body>
 </html>
-
