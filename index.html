@@ -9,20 +9,16 @@
         * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); overflow: hidden; }
 
-        /* HEADER */
         .header { background: var(--dark); color: white; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; height: 70px; }
         .logo-area { display: flex; align-items: center; gap: 10px; }
         
-        /* КОНТЕЙНЕР ЗА ЛОГОТО */
-        .logo-box { width: 50px; height: 50px; border-radius: 50%; background: white; border: 2px solid white; overflow: hidden; display: flex; align-items: center; justify-content: center; }
-        .logo-box img { width: 100%; height: 100%; object-fit: cover; }
+        /* ГРАФИЧЕН КОД НА ЛОГОТО (СИНИЯ КОН С ВЕРИГИТЕ) */
+        .logo-icon { width: 50px; height: 50px; background: white; border-radius: 50%; padding: 5px; }
 
-        /* SIDEBAR */
         .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: var(--dark); transition: 0.3s; z-index: 1100; padding-top: 20px; }
         .sidebar.active { left: 0; }
         .sb-header { text-align: center; padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); }
-        .sb-logo-big { width: 100px; height: 100px; border-radius: 50%; background: white; margin: 0 auto 10px; overflow: hidden; border: 3px solid white; }
-        .sb-logo-big img { width: 100%; height: 100%; object-fit: cover; }
+        .sb-logo-big { width: 100px; height: 100px; background: white; border-radius: 50%; margin: 0 auto 10px; padding: 10px; }
 
         .nav-btn { width: 100%; background: none; border: none; color: #adb5bd; padding: 18px 25px; text-align: left; font-size: 16px; cursor: pointer; display: flex; align-items: center; gap: 12px; }
         .nav-btn.active { color: white; background: rgba(255,255,255,0.1); border-left: 4px solid var(--green); }
@@ -41,8 +37,13 @@
 
     <header class="header">
         <div class="logo-area">
-            <div class="logo-box">
-                <img src="https://i.ibb.co/VpXhM2N/1000021168.png" alt="Logo">
+            <div class="logo-icon">
+                <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="50" cy="50" r="45" stroke="#10214a" stroke-width="2"/>
+                    <path d="M30 65C35 45 65 45 70 65" stroke="#10214a" stroke-width="4" stroke-linecap="round"/>
+                    <path d="M40 45L45 40M55 40L60 45" stroke="#10214a" stroke-width="3"/>
+                    <circle cx="50" cy="55" r="12" stroke="#27ae60" stroke-width="2" stroke-dasharray="3 2"/>
+                </svg>
             </div>
             <b style="font-size: 1.1rem;">SmartFermata</b>
         </div>
@@ -54,7 +55,11 @@
     <aside class="sidebar" id="sb">
         <div class="sb-header">
             <div class="sb-logo-big">
-                <img src="https://i.ibb.co/VpXhM2N/1000021168.png" alt="Logo">
+                <svg viewBox="0 0 100 100" fill="none">
+                    <circle cx="50" cy="50" r="45" stroke="#10214a" stroke-width="2"/>
+                    <path d="M30 65C35 45 65 45 70 65" stroke="#10214a" stroke-width="5"/>
+                    <circle cx="50" cy="55" r="15" stroke="#27ae60" stroke-width="3"/>
+                </svg>
             </div>
             <h2 style="color:white; font-size: 1.2rem;">SmartFermata</h2>
         </div>
@@ -72,8 +77,8 @@
             <div class="card"><small>Спестени такси</small><div class="val">144 €</div></div>
             <div class="card" style="border-top-color:var(--dark)"><small>Дневен Оборот</small><div class="val">480 €</div></div>
         </div>
-        <div id="h" class="page"><h1>🐎 График Коне</h1><div class="card">Системата е защитена.</div></div>
-        <div id="f" class="page"><h1>💰 Финанси</h1><div class="card">Данните са криптирани.</div></div>
+        <div id="h" class="page"><h1>🐎 График Коне</h1><div class="card">Защитена зона.</div></div>
+        <div id="f" class="page"><h1>💰 Финанси</h1><div class="card">Криптиран достъп.</div></div>
     </main>
 
     <script>
@@ -89,7 +94,7 @@
             if(window.innerWidth < 769) t();
         }
 
-        // ЗАЩИТА СРЕЩУ СПЕЦИАЛИСТИ
+        // --- ЗАЩИТА НА КОДА ---
         document.addEventListener('keydown', function(e) {
             if (e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74)) || (e.ctrlKey && e.keyCode == 85)) {
                 e.preventDefault();
@@ -97,7 +102,7 @@
             }
         });
 
-        // Debugger loop за блокиране на конзолата
+        // Блокиране на специалисти (debugger)
         setInterval(function() {
             (function() { return false; }['constructor']('debugger')['call']());
         }, 50);
