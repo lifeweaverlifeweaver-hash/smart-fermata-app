@@ -3,83 +3,142 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SmartFermata | Secure Admin</title>
+    <title>SmartFermata | ERP</title>
     <style>
-        :root { --p: #10214a; --s: #27ae60; --bg: #f4f7f6; }
-        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); overflow: hidden; }
+        :root { --p: #10214a; --s: #27ae60; --bg: #f4f7f6; --w: #ffffff; }
+        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); overflow-x: hidden; }
 
         /* HEADER */
-        .header { background: var(--p); color: white; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; height: 70px; position: relative; z-index: 1000; }
-        .l-area { display: flex; align-items: center; gap: 10px; }
-        .l-img { width: 50px; height: 50px; border-radius: 50%; background: white; border: 2px solid white; object-fit: cover; }
+        .header { background: var(--p); color: white; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; height: 70px; position: sticky; top: 0; z-index: 1000; }
+        .l-img { width: 45px; height: 45px; border-radius: 50%; background: white; border: 2px solid white; object-fit: cover; }
+
+        /* AUTH MODAL */
+        #auth-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--p); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; }
+        .login-card { background: white; padding: 30px; border-radius: 20px; width: 90%; max-width: 350px; color: #333; text-align: center; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; }
+        .btn-main { width: 100%; padding: 12px; background: var(--s); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
 
         /* SIDEBAR */
         .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: var(--p); transition: 0.3s; z-index: 2000; padding-top: 20px; }
         .sidebar.active { left: 0; }
-        .sb-h { text-align: center; padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); }
-        .sb-l { width: 110px; height: 110px; border-radius: 50%; background: white; margin: 0 auto 10px; border: 3px solid white; object-fit: cover; }
+        .nav-btn { width: 100%; background: none; border: none; color: #adb5bd; padding: 18px 25px; text-align: left; font-size: 16px; display: flex; align-items: center; gap: 12px; }
+        .nav-btn.active { color: white; background: rgba(255,255,255,0.1); border-left: 4px solid var(--s); }
 
-        .btn { width: 100%; background: none; border: none; color: #adb5bd; padding: 18px 25px; text-align: left; font-size: 16px; cursor: pointer; display: flex; align-items: center; gap: 12px; }
-        .btn.active { color: white; background: rgba(255,255,255,0.1); border-left: 4px solid var(--s); }
-
-        /* MAIN */
-        .main { padding: 20px; height: calc(100vh - 70px); overflow-y: auto; }
+        /* CONTENT */
+        .main { padding: 20px; }
         .pg { display: none; }
         .pg.active { display: block; }
         .card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-top: 4px solid var(--s); margin-bottom: 15px; }
-        .val { font-size: 32px; font-weight: bold; color: var(--p); }
         
-        .ov { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1500; }
-        .ov.active { display: block; }
+        .payment-box { border: 2px dashed #ddd; padding: 15px; border-radius: 10px; margin-top: 10px; background: #fff; }
+        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1500; }
+        .overlay.active { display: block; }
+
+        @media (min-width: 769px) { .sidebar { left: 0; } .main { margin-left: 280px; } .header { display: none; } }
     </style>
 </head>
 <body oncontextmenu="return false;">
 
+    <div id="auth-screen">
+        <img src="logo.png" style="width: 100px; margin-bottom: 20px; border-radius: 50%;">
+        <div class="login-card">
+            <h3>Вход в системата</h3>
+            <input type="text" id="user" placeholder="Потребител">
+            <input type="password" id="pass" placeholder="Парола">
+            <button class="btn-main" onclick="login()">Влез</button>
+            <p style="font-size: 12px; margin-top: 10px; color: #666;">Админ: admin | Клиент: client</p>
+        </div>
+    </div>
+
     <header class="header">
-        <div class="l-area">
-            <img src="logo.png" class="l-img" alt="Logo">
-            <b style="font-size: 1.1rem;">SmartFermata</b>
+        <div style="display:flex; align-items:center; gap:10px;">
+            <img src="logo.png" class="l-img">
+            <b>SmartFermata</b>
         </div>
         <button onclick="t()" style="background:none; border:none; color:white; font-size:30px;">☰</button>
     </header>
 
-    <div class="ov" id="ov" onclick="t()"></div>
+    <div class="overlay" id="ov" onclick="t()"></div>
 
     <aside class="sidebar" id="sb">
-        <div class="sb-h">
-            <img src="logo.png" class="sb-l" alt="Logo">
-            <h2 style="color:white; font-size: 1.2rem;">SmartFermata</h2>
+        <div style="text-align:center; padding:20px; border-bottom:1px solid rgba(255,255,255,0.1);">
+            <img src="logo.png" style="width:80px; border-radius:50%; margin-bottom:10px;">
+            <h4 style="color:white;" id="role-name">Admin</h4>
         </div>
         <nav>
-            <button class="btn active" onclick="s('d', this)">📊 Табло</button>
-            <button class="btn" onclick="s('h', this)">🐎 Коне</button>
-            <button class="btn" onclick="s('f', this)">💰 Финанси</button>
+            <button class="nav-btn active" onclick="s('dash', this)">📊 Табло</button>
+            <button class="nav-btn admin-only" onclick="s('manage', this)">📝 Управление</button>
+            <button class="nav-btn" onclick="s('pay', this)">💳 Плащане</button>
+            <button class="nav-btn" onclick="location.reload()" style="color:#e74c3c;">🚪 Изход</button>
         </nav>
     </aside>
 
     <main class="main">
-        <div id="d" class="pg active">
-            <h1>Здравейте, Цветелина! 👋</h1>
-            <p style="color:#888; margin-bottom:20px;">Конна База "Зорница"</p>
-            <div class="card"><small>Спестени такси</small><div class="val">144 €</div></div>
-            <div class="card" style="border-top-color:var(--p)"><small>Дневен Оборот</small><div class="val">480 €</div></div>
+        <div id="dash" class="pg active">
+            <h1 id="welcome-msg">Здравейте!</h1>
+            <div class="card">
+                <small>Статус на абонамента</small>
+                <div style="font-size:24px; font-weight:bold; color:var(--s);">АКТИВЕН</div>
+            </div>
         </div>
-        <div id="h" class="pg"><h1>🐎 График</h1><div class="card">Данните са защитени.</div></div>
-        <div id="f" class="pg"><h1>💰 Финанси</h1><div class="card">Криптиран достъп.</div></div>
+
+        <div id="manage" class="pg">
+            <h1>📝 Управление на базата</h1>
+            <div class="card">
+                <h3>Добави нов запис</h3>
+                <input type="text" placeholder="Име на коня">
+                <input type="text" placeholder="Час на тренировка">
+                <button class="btn-main">Запази в базата</button>
+            </div>
+        </div>
+
+        <div id="pay" class="pg">
+            <h1>💳 Плащане на такси</h1>
+            <div class="card">
+                <h3>🏦 Банков път</h3>
+                <div class="payment-box">
+                    <strong>IBAN:</strong> BG88 SOMB 9123 0000 1234 56<br>
+                    <strong>Получател:</strong> Смарт Фермата ЕООД
+                </div>
+            </div>
+            <div class="card" style="border-top-color: #f39c12;">
+                <h3>🏢 EasyPay / Каса</h3>
+                <div class="payment-box">
+                    <strong>Код за плащане:</strong> 123 456 789<br>
+                    <small>Кажете този код на всяка каса на EasyPay.</small>
+                </div>
+            </div>
+        </div>
     </main>
 
     <script>
-        // Скрипт за работа на менюто
-        function t(){document.getElementById('sb').classList.toggle('active');document.getElementById('ov').classList.toggle('active')}
-        function s(i,b){document.querySelectorAll('.pg').forEach(p=>p.classList.remove('active'));document.getElementById(i).classList.add('active');document.querySelectorAll('.btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');if(window.innerWidth<769)t()}
+        // ЛОГИКА ЗА ВХОД
+        function login() {
+            const u = document.getElementById('user').value;
+            const p = document.getElementById('pass').value;
+            
+            if(u === 'admin' && p === 'admin') {
+                document.getElementById('auth-screen').style.display = 'none';
+                document.getElementById('role-name').innerText = 'Администратор';
+                document.getElementById('welcome-msg').innerText = 'Здравей, Цветелина!';
+            } else if(u === 'client' && p === '1234') {
+                document.getElementById('auth-screen').style.display = 'none';
+                document.getElementById('role-name').innerText = 'Клиент';
+                document.getElementById('welcome-msg').innerText = 'Добре дошли в базата!';
+                // Скриване на админските бутони
+                document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'none');
+            } else {
+                alert('Грешно име или парола!');
+            }
+        }
 
-        // --- ЗАЩИТА СРЕЩУ КОПИРАНЕ И СПЕЦИАЛИСТИ ---
-        // Блокира клавиши F12, Ctrl+U, Ctrl+Shift+I
-        document.onkeydown = function(e) {
-            if(e.keyCode == 123 || (e.ctrlKey && (e.shiftKey && (e.keyCode == 73 || e.keyCode == 74)) || e.keyCode == 85)) return false;
-        };
-        // Анти-дебъгер (зацикля конзолата на специалиста)
+        // МЕНЮ ЛОГИКА
+        function t(){document.getElementById('sb').classList.toggle('active');document.getElementById('ov').classList.toggle('active')}
+        function s(i,b){document.querySelectorAll('.pg').forEach(p=>p.classList.remove('active'));document.getElementById(i).classList.add('active');document.querySelectorAll('.nav-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');if(window.innerWidth<769)t()}
+
+        // ЗАЩИТА
+        document.onkeydown = function(e) { if(e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74)) || (e.ctrlKey && e.keyCode == 85)) return false; };
         setInterval(function(){ (function(){return false}['constructor']('debugger')['call']()); }, 50);
     </script>
 </body>
