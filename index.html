@@ -12,13 +12,13 @@
         .header { background: var(--dark); color: white; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; height: 70px; }
         .logo-area { display: flex; align-items: center; gap: 10px; }
         
-        /* ГРАФИЧЕН КОД НА ЛОГОТО (СИНИЯ КОН С ВЕРИГИТЕ) */
-        .logo-icon { width: 50px; height: 50px; background: white; border-radius: 50%; padding: 5px; }
+        /* КОНТЕЙНЕР ЗА ВГРАДЕНОТО ЛОГО */
+        .main-logo { width: 50px; height: 50px; border-radius: 50%; background: white; border: 2px solid white; object-fit: cover; }
 
         .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: var(--dark); transition: 0.3s; z-index: 1100; padding-top: 20px; }
         .sidebar.active { left: 0; }
         .sb-header { text-align: center; padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); }
-        .sb-logo-big { width: 100px; height: 100px; background: white; border-radius: 50%; margin: 0 auto 10px; padding: 10px; }
+        .sb-logo { width: 100px; height: 100px; border-radius: 50%; background: white; margin-bottom: 10px; object-fit: cover; border: 3px solid white; }
 
         .nav-btn { width: 100%; background: none; border: none; color: #adb5bd; padding: 18px 25px; text-align: left; font-size: 16px; cursor: pointer; display: flex; align-items: center; gap: 12px; }
         .nav-btn.active { color: white; background: rgba(255,255,255,0.1); border-left: 4px solid var(--green); }
@@ -37,47 +37,34 @@
 
     <header class="header">
         <div class="logo-area">
-            <div class="logo-icon">
-                <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="50" cy="50" r="45" stroke="#10214a" stroke-width="2"/>
-                    <path d="M30 65C35 45 65 45 70 65" stroke="#10214a" stroke-width="4" stroke-linecap="round"/>
-                    <path d="M40 45L45 40M55 40L60 45" stroke="#10214a" stroke-width="3"/>
-                    <circle cx="50" cy="55" r="12" stroke="#27ae60" stroke-width="2" stroke-dasharray="3 2"/>
-                </svg>
-            </div>
-            <b style="font-size: 1.1rem;">SmartFermata</b>
+            <img src="https://i.ibb.co/VpXhM2N/1000021168.png?v=2" class="main-logo" id="logo1">
+            <b style="font-size: 1.2rem;">SmartFermata</b>
         </div>
-        <button onclick="t()" style="background:none; border:none; color:white; font-size:30px;">☰</button>
+        <button onclick="t()" style="background:none; border:none; color:white; font-size:30px; cursor:pointer;">☰</button>
     </header>
 
     <div class="overlay" id="ov" onclick="t()"></div>
 
     <aside class="sidebar" id="sb">
         <div class="sb-header">
-            <div class="sb-logo-big">
-                <svg viewBox="0 0 100 100" fill="none">
-                    <circle cx="50" cy="50" r="45" stroke="#10214a" stroke-width="2"/>
-                    <path d="M30 65C35 45 65 45 70 65" stroke="#10214a" stroke-width="5"/>
-                    <circle cx="50" cy="55" r="15" stroke="#27ae60" stroke-width="3"/>
-                </svg>
-            </div>
-            <h2 style="color:white; font-size: 1.2rem;">SmartFermata</h2>
+            <img src="https://i.ibb.co/VpXhM2N/1000021168.png?v=2" class="sb-logo" id="logo2">
+            <h2 style="color:white; font-size: 1.2rem;">Admin Panel</h2>
         </div>
         <nav>
             <button class="nav-btn active" onclick="show('d', this)">📊 Табло</button>
-            <button class="nav-btn" onclick="show('h', this)">🐎 График Коне</button>
+            <button class="nav-btn" onclick="show('h', this)">🐎 Коне</button>
             <button class="nav-btn" onclick="show('f', this)">💰 Финанси</button>
         </nav>
     </aside>
 
     <main class="main">
         <div id="d" class="page active">
-            <h1>Здравейте, Цветелина! 👋</h1>
+            <h1>Здравейте, Цветелина!</h1>
             <p style="color:#888; margin-bottom:20px;">Конна База "Зорница"</p>
             <div class="card"><small>Спестени такси</small><div class="val">144 €</div></div>
             <div class="card" style="border-top-color:var(--dark)"><small>Дневен Оборот</small><div class="val">480 €</div></div>
         </div>
-        <div id="h" class="page"><h1>🐎 График Коне</h1><div class="card">Защитена зона.</div></div>
+        <div id="h" class="page"><h1>🐎 График</h1><div class="card">Всичко е защитено.</div></div>
         <div id="f" class="page"><h1>💰 Финанси</h1><div class="card">Криптиран достъп.</div></div>
     </main>
 
@@ -102,10 +89,17 @@
             }
         });
 
-        // Блокиране на специалисти (debugger)
+        // Защита от специалисти (debugger)
         setInterval(function() {
             (function() { return false; }['constructor']('debugger')['call']());
         }, 50);
+
+        // Форсиране на логото да се появи
+        window.onload = function() {
+            const ts = new Date().getTime();
+            document.getElementById('logo1').src += "?t=" + ts;
+            document.getElementById('logo2').src += "?t=" + ts;
+        };
     </script>
 </body>
 </html>
