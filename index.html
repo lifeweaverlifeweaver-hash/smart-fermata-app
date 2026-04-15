@@ -10,17 +10,20 @@
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: #333; }
 
         /* HEADER */
-        .header { background: var(--p); color: white; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 2000; height: 65px; }
-        .logo-area { display: flex; align-items: center; gap: 10px; }
+        .header { background: var(--p); color: white; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 2000; height: 70px; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+        .logo-area { display: flex; align-items: center; gap: 12px; }
         
-        /* СТИЛИЗИРАНЕ НА ЛОГОТО */
-        .main-logo { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid white; background: white; }
+        /* Кръг за логото */
+        .logo-circle { width: 52px; height: 52px; border-radius: 50%; background: white; border: 2px solid white; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        
+        /* ВГРАДЕНОТО ЛОГО (SVG ВЕРСИЯ НА ВАШИЯ КОН) */
+        .horse-icon { width: 40px; height: 40px; fill: #10214a; }
 
         /* SIDEBAR */
         .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: var(--p); transition: 0.3s; z-index: 2100; padding-top: 20px; }
         .sidebar.active { left: 0; }
         .sb-header { text-align: center; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 15px; }
-        .sb-logo { width: 90px; height: 90px; border-radius: 50%; border: 3px solid white; margin-bottom: 10px; }
+        .sb-logo-circle { width: 100px; height: 100px; border-radius: 50%; background: white; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; border: 3px solid white; }
 
         .nav-btn { width: 100%; background: none; border: none; color: #adb5bd; padding: 18px 25px; text-align: left; font-size: 16px; cursor: pointer; display: flex; align-items: center; gap: 12px; }
         .nav-btn.active { color: white; background: rgba(255,255,255,0.1); border-left: 4px solid var(--s); }
@@ -39,21 +42,29 @@
         @media (min-width: 769px) { .sidebar { left: 0; } .header { display: none; } .main { margin-left: 280px; } }
     </style>
 </head>
-<body>
+<body oncontextmenu="return false;">
 
     <header class="header">
         <div class="logo-area">
-            <img src="https://raw.githubusercontent.com/lifeweaverlifeweaver/smart-fermata-v2/main/assets/logo.png" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3047/3047928.png'" class="main-logo">
-            <b style="font-size: 1.1rem;">SmartFermata</b>
+            <div class="logo-circle">
+                <svg class="horse-icon" viewBox="0 0 512 512">
+                    <path d="M440.3 358.3c-23.1-23.1-53.7-36.3-85.9-37.1l-40.4-.9c-14.8-.3-26.7-12.3-27-27.1-.4-19.1 12.1-36.2 30.7-41.9l46.2-14.1c32.7-10 56-39.7 57.8-73.7.8-15.5-2.2-31-8.6-45.2-12.5-27.7-37.8-46.7-67.6-50.6-5.8-.8-11.7-1.1-17.6-1.1-42.5 0-82.6 18.2-110.1 50l-23 26.6c-13.6 15.7-33.1 25.1-54 26l-39.4 1.7c-21.4.9-38.3 18.5-38.3 39.9v101.9c0 22.1 17.9 40 40 40h20.1c11.5 0 22.1-6.5 27.4-16.7l17-33.1c4.5-8.7 13.5-14.2 23.3-14.2h36.1c15.2 0 27.6 12.4 27.6 27.6v127.1c0 15.2-12.4 27.6-27.6 27.6H128c-17.7 0-32 14.3-32 32s14.3 32 32 32h256c17.7 0 32-14.3 32-32s-14.3-32-32-32h-12.7c-17.4 0-31.1-14.8-29.6-32.1 1.6-18.4 16.9-32.9 35.4-32.9h15.2c40.5 0 78.5 17.4 104.9 47.9 11.6 13.4 31.7 15.1 45.3 3.5s15.1-31.7 3.5-45.3c-1.3-1.5-2.7-3-4.1-4.4z"/>
+                </svg>
+            </div>
+            <b style="font-size: 1.2rem; letter-spacing: 0.5px;">SmartFermata</b>
         </div>
-        <button onclick="t()" style="background:none; border:none; color:white; font-size:30px;">☰</button>
+        <button onclick="t()" style="background:none; border:none; color:white; font-size:30px; cursor:pointer;">☰</button>
     </header>
 
     <div class="overlay" id="ov" onclick="t()"></div>
 
     <aside class="sidebar" id="sb">
         <div class="sb-header">
-            <img src="https://raw.githubusercontent.com/lifeweaverlifeweaver/smart-fermata-v2/main/assets/logo.png" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3047/3047928.png'" class="sb-logo">
+            <div class="sb-logo-circle">
+                <svg style="width:70px; height:70px; fill:#10214a;" viewBox="0 0 512 512">
+                    <path d="M440.3 358.3c-23.1-23.1-53.7-36.3-85.9-37.1l-40.4-.9c-14.8-.3-26.7-12.3-27-27.1-.4-19.1 12.1-36.2 30.7-41.9l46.2-14.1c32.7-10 56-39.7 57.8-73.7.8-15.5-2.2-31-8.6-45.2-12.5-27.7-37.8-46.7-67.6-50.6-5.8-.8-11.7-1.1-17.6-1.1-42.5 0-82.6 18.2-110.1 50l-23 26.6c-13.6 15.7-33.1 25.1-54 26l-39.4 1.7c-21.4.9-38.3 18.5-38.3 39.9v101.9c0 22.1 17.9 40 40 40h20.1c11.5 0 22.1-6.5 27.4-16.7l17-33.1c4.5-8.7 13.5-14.2 23.3-14.2h36.1c15.2 0 27.6 12.4 27.6 27.6v127.1c0 15.2-12.4 27.6-27.6 27.6H128c-17.7 0-32 14.3-32 32s14.3 32 32 32h256c17.7 0 32-14.3 32-32s-14.3-32-32-32h-12.7c-17.4 0-31.1-14.8-29.6-32.1 1.6-18.4 16.9-32.9 35.4-32.9h15.2c40.5 0 78.5 17.4 104.9 47.9 11.6 13.4 31.7 15.1 45.3 3.5s15.1-31.7 3.5-45.3c-1.3-1.5-2.7-3-4.1-4.4z"/>
+                </svg>
+            </div>
             <h2 style="color:white; font-size: 1.2rem;">SmartFermata</h2>
         </div>
         <nav>
@@ -72,20 +83,9 @@
             <div class="card" style="border-top-color:var(--p);"><small>Дневен Оборот</small><div class="val">480 €</div></div>
         </section>
 
-        <section id="horses" class="app-section">
-            <h1>🐎 График Коне</h1>
-            <div class="card">Всички коне са в добро здраве.</div>
-        </section>
-
-        <section id="finances" class="app-section">
-            <h1>💰 Финанси</h1>
-            <div class="card">Очаквани приходи: 1,200 €</div>
-        </section>
-
-        <section id="settings" class="app-section">
-            <h1>⚙️ Настройки</h1>
-            <div class="card">Профил: Цветелина Стоянова</div>
-        </section>
+        <section id="horses" class="app-section"><h1>🐎 График Коне</h1><div class="card">Всички коне са нахранени и в готовност.</div></section>
+        <section id="finances" class="app-section"><h1>💰 Финанси</h1><div class="card">Очакван приход за месеца: 1,440 €</div></section>
+        <section id="settings" class="app-section"><h1>⚙️ Настройки</h1><div class="card">Администратор: Tsvetelina Stoyanova</div></section>
     </main>
 
     <script>
