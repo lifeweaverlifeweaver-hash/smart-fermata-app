@@ -3,104 +3,154 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SmartFermata | Цветелина</title>
+    <title>SmartFermata | Професионално управление</title>
     <style>
-        :root { --p: #10214a; --s: #27ae60; --bg: #f4f7f6; --w: #ffffff; }
+        /* ОСНОВНИ СТИЛОВЕ */
+        :root { 
+            --primary-color: #10214a; /* Тъмно синьото от логото */
+            --accent-color: #27ae60; 
+            --bg-color: #f4f7f6; 
+            --white: #ffffff; 
+        }
+        
         * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: #333; }
-
-        /* HEADER */
-        .header { background: var(--p); color: white; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 2000; height: 70px; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
-        .logo-area { display: flex; align-items: center; gap: 12px; }
         
-        /* Кръг за логото */
-        .logo-circle { width: 52px; height: 52px; border-radius: 50%; background: white; border: 2px solid white; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-        
-        /* ВГРАДЕНОТО ЛОГО (SVG ВЕРСИЯ НА ВАШИЯ КОН) */
-        .horse-icon { width: 40px; height: 40px; fill: #10214a; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: var(--bg-color); 
+            color: #333; 
+            overflow-x: hidden;
+        }
 
-        /* SIDEBAR */
-        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: var(--p); transition: 0.3s; z-index: 2100; padding-top: 20px; }
+        /* HEADER ЗА МОБИЛЕН */
+        .mobile-header { 
+            background-color: var(--primary-color); 
+            color: white; 
+            padding: 10px 15px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            position: sticky; 
+            top: 0; 
+            z-index: 2000; 
+            height: 70px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        /* Кръглата рамка за логото в хедъра */
+        .header-logo-circle {
+            width: 50px;
+            height: 50px;
+            background-color: white;
+            border-radius: 50%;
+            padding: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid white;
+        }
+        
+        .header-logo-circle img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        /* СТРАНИЧНО МЕНЮ */
+        .sidebar { 
+            width: 280px; 
+            background-color: var(--primary-color); 
+            color: white; 
+            height: 100vh; 
+            position: fixed; 
+            top: 0;
+            left: -280px; 
+            transition: all 0.3s ease; 
+            z-index: 2100; 
+            display: flex;
+            flex-direction: column;
+            box-shadow: 5px 0 15px rgba(0,0,0,0.3);
+        }
+        
         .sidebar.active { left: 0; }
-        .sb-header { text-align: center; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 15px; }
-        .sb-logo-circle { width: 100px; height: 100px; border-radius: 50%; background: white; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; border: 3px solid white; }
-
-        .nav-btn { width: 100%; background: none; border: none; color: #adb5bd; padding: 18px 25px; text-align: left; font-size: 16px; cursor: pointer; display: flex; align-items: center; gap: 12px; }
-        .nav-btn.active { color: white; background: rgba(255,255,255,0.1); border-left: 4px solid var(--s); }
-
-        /* CONTENT */
-        .main { padding: 20px; max-width: 1200px; margin: 0 auto; }
-        .app-section { display: none; }
-        .app-section.active { display: block; }
         
-        .card { background: var(--w); padding: 20px; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-top: 4px solid var(--s); margin-bottom: 15px; }
-        .val { font-size: 32px; font-weight: bold; color: var(--p); margin: 5px 0; }
+        .sidebar-header { 
+            padding: 30px 20px; 
+            text-align: center; 
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
         
-        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2050; }
-        .overlay.active { display: block; }
-
-        @media (min-width: 769px) { .sidebar { left: 0; } .header { display: none; } .main { margin-left: 280px; } }
-    </style>
-</head>
-<body oncontextmenu="return false;">
-
-    <header class="header">
-        <div class="logo-area">
-            <div class="logo-circle">
-                <svg class="horse-icon" viewBox="0 0 512 512">
-                    <path d="M440.3 358.3c-23.1-23.1-53.7-36.3-85.9-37.1l-40.4-.9c-14.8-.3-26.7-12.3-27-27.1-.4-19.1 12.1-36.2 30.7-41.9l46.2-14.1c32.7-10 56-39.7 57.8-73.7.8-15.5-2.2-31-8.6-45.2-12.5-27.7-37.8-46.7-67.6-50.6-5.8-.8-11.7-1.1-17.6-1.1-42.5 0-82.6 18.2-110.1 50l-23 26.6c-13.6 15.7-33.1 25.1-54 26l-39.4 1.7c-21.4.9-38.3 18.5-38.3 39.9v101.9c0 22.1 17.9 40 40 40h20.1c11.5 0 22.1-6.5 27.4-16.7l17-33.1c4.5-8.7 13.5-14.2 23.3-14.2h36.1c15.2 0 27.6 12.4 27.6 27.6v127.1c0 15.2-12.4 27.6-27.6 27.6H128c-17.7 0-32 14.3-32 32s14.3 32 32 32h256c17.7 0 32-14.3 32-32s-14.3-32-32-32h-12.7c-17.4 0-31.1-14.8-29.6-32.1 1.6-18.4 16.9-32.9 35.4-32.9h15.2c40.5 0 78.5 17.4 104.9 47.9 11.6 13.4 31.7 15.1 45.3 3.5s15.1-31.7 3.5-45.3c-1.3-1.5-2.7-3-4.1-4.4z"/>
-                </svg>
-            </div>
-            <b style="font-size: 1.2rem; letter-spacing: 0.5px;">SmartFermata</b>
-        </div>
-        <button onclick="t()" style="background:none; border:none; color:white; font-size:30px; cursor:pointer;">☰</button>
-    </header>
-
-    <div class="overlay" id="ov" onclick="t()"></div>
-
-    <aside class="sidebar" id="sb">
-        <div class="sb-header">
-            <div class="sb-logo-circle">
-                <svg style="width:70px; height:70px; fill:#10214a;" viewBox="0 0 512 512">
-                    <path d="M440.3 358.3c-23.1-23.1-53.7-36.3-85.9-37.1l-40.4-.9c-14.8-.3-26.7-12.3-27-27.1-.4-19.1 12.1-36.2 30.7-41.9l46.2-14.1c32.7-10 56-39.7 57.8-73.7.8-15.5-2.2-31-8.6-45.2-12.5-27.7-37.8-46.7-67.6-50.6-5.8-.8-11.7-1.1-17.6-1.1-42.5 0-82.6 18.2-110.1 50l-23 26.6c-13.6 15.7-33.1 25.1-54 26l-39.4 1.7c-21.4.9-38.3 18.5-38.3 39.9v101.9c0 22.1 17.9 40 40 40h20.1c11.5 0 22.1-6.5 27.4-16.7l17-33.1c4.5-8.7 13.5-14.2 23.3-14.2h36.1c15.2 0 27.6 12.4 27.6 27.6v127.1c0 15.2-12.4 27.6-27.6 27.6H128c-17.7 0-32 14.3-32 32s14.3 32 32 32h256c17.7 0 32-14.3 32-32s-14.3-32-32-32h-12.7c-17.4 0-31.1-14.8-29.6-32.1 1.6-18.4 16.9-32.9 35.4-32.9h15.2c40.5 0 78.5 17.4 104.9 47.9 11.6 13.4 31.7 15.1 45.3 3.5s15.1-31.7 3.5-45.3c-1.3-1.5-2.7-3-4.1-4.4z"/>
-                </svg>
-            </div>
-            <h2 style="color:white; font-size: 1.2rem;">SmartFermata</h2>
-        </div>
-        <nav>
-            <button class="nav-btn active" onclick="show('dashboard', this)">📊 Табло</button>
-            <button class="nav-btn" onclick="show('horses', this)">🐎 График Коне</button>
-            <button class="nav-btn" onclick="show('finances', this)">💰 Финанси</button>
-            <button class="nav-btn" onclick="show('settings', this)">⚙️ Настройки</button>
-        </nav>
-    </aside>
-
-    <main class="main">
-        <section id="dashboard" class="app-section active">
-            <h1 style="font-size: 24px;">Здравейте, Цветелина! 👋</h1>
-            <p style="color:#888; margin-bottom:20px;">Конна База "Зорница"</p>
-            <div class="card"><small>Спестени такси</small><div class="val">144 €</div><p style="color:var(--s);">● Директен приход</p></div>
-            <div class="card" style="border-top-color:var(--p);"><small>Дневен Оборот</small><div class="val">480 €</div></div>
-        </section>
-
-        <section id="horses" class="app-section"><h1>🐎 График Коне</h1><div class="card">Всички коне са нахранени и в готовност.</div></section>
-        <section id="finances" class="app-section"><h1>💰 Финанси</h1><div class="card">Очакван приход за месеца: 1,440 €</div></section>
-        <section id="settings" class="app-section"><h1>⚙️ Настройки</h1><div class="card">Администратор: Tsvetelina Stoyanova</div></section>
-    </main>
-
-    <script>
-        function t() {
-            document.getElementById('sb').classList.toggle('active');
-            document.getElementById('ov').classList.toggle('active');
+        /* Голямото лого в менюто */
+        .sidebar-logo-img {
+            width: 120px;
+            height: 120px;
+            object-fit: contain;
+            margin-bottom: 15px;
         }
-
-        function show(id, btn) {
-            document.querySelectorAll('.app-section').forEach(s => s.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            if(window.innerWidth < 769) t();
+        
+        .sidebar-header h2 { font-size: 1.4rem; font-weight: bold; margin-bottom: 5px; }
+        .sidebar-header p { font-size: 0.8rem; color: #adb5bd; text-transform: uppercase; letter-spacing: 1px; }
+        
+        .nav-links { padding: 20px 0; flex-grow: 1; }
+        
+        .nav-btn { 
+            width: 100%; 
+            background: none; 
+            border: none; 
+            color: #adb5bd; 
+            padding: 18px 25px; 
+            text-align: left; 
+            font-size: 1.1rem; 
+            cursor: pointer; 
+            transition: all 0.3s; 
+            display: flex;
+            align-items: center;
+            gap: 15px;
         }
-    </script>
-</body>
-</html>
+        
+        .nav-btn:hover { color: white; background-color: rgba(255,255,255,0.05); }
+        .nav-btn.active { color: white; background-color: rgba(255,255,255,0.1); border-left: 4px solid var(--accent-color); padding-left: 21px; }
+
+        .sidebar-footer { padding: 20px; font-size: 0.8rem; color: #6c757d; border-top: 1px solid rgba(255,255,255,0.1); text-align: center; }
+
+        /* ОСНОВНО СЪДЪРЖАНИЕ */
+        .main-content { 
+            padding: 20px; 
+            transition: all 0.3s ease; 
+            width: 100%;
+        }
+        
+        .app-section { display: none; opacity: 0; transition: opacity 0.4s ease; }
+        .app-section.active { display: block; opacity: 1; }
+        
+        .section-header { margin-bottom: 25px; padding-bottom: 10px; border-bottom: 1px solid #eee; }
+        .section-header h1 { font-size: 1.8rem; color: var(--primary-color); }
+        .date-today { color: #888; font-size: 0.9rem; }
+
+        /* КАРТИ СЪС СТАТИСТИКА */
+        .stats-grid { 
+            display: grid; 
+            grid-template-columns: 1fr; 
+            gap: 15px; 
+            margin-bottom: 25px; 
+        }
+        
+        .stat-card { 
+            background-color: var(--white); 
+            padding: 20px; 
+            border-radius: 15px; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05); 
+            border-left: 5px solid transparent;
+            transition: transform 0.2s;
+        }
+        
+        .stat-card:active { transform: scale(0.98); }
+        
+        .stat-card.accent { border-left-
+        
