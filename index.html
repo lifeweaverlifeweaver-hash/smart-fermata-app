@@ -3,56 +3,104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SmartFermata | Admin Panel</title>
+    <title>SmartFermata | Цветелина</title>
     <style>
-        /* ЦВЕТОВЕ НА БАЗА ЛОГОТО */
         :root { --p: #10214a; --s: #27ae60; --bg: #f4f7f6; --w: #ffffff; }
-        
-        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: #333; overflow-x: hidden; }
+        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: #333; }
 
-        /* ГОРНА ЛЕНТА (MOBILE) */
-        .header { background: var(--p); color: white; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 2000; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
-        .logo-area { display: flex; align-items: center; gap: 12px; }
+        /* HEADER */
+        .header { background: var(--p); color: white; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 2000; height: 65px; }
+        .logo-area { display: flex; align-items: center; gap: 10px; }
         
-        /* ВГРАДЕНОТО ЛОГО КАТО СТИЛ */
-        .logo-img { 
-            width: 42px; height: 42px; border-radius: 50%; border: 2px solid white; background: white;
-            object-fit: cover;
-        }
+        /* СТИЛИЗИРАНЕ НА ЛОГОТО */
+        .main-logo { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid white; background: white; }
 
-        /* МЕНЮ */
-        .sidebar { position: fixed; left: -285px; top: 0; width: 280px; height: 100%; background: var(--p); transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 2100; padding-top: 20px; box-shadow: 5px 0 15px rgba(0,0,0,0.3); }
+        /* SIDEBAR */
+        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: var(--p); transition: 0.3s; z-index: 2100; padding-top: 20px; }
         .sidebar.active { left: 0; }
-        .sidebar-header { text-align: center; padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 15px; }
-        .logo-large { width: 90px; height: 90px; border-radius: 50%; border: 3px solid white; margin-bottom: 10px; }
+        .sb-header { text-align: center; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 15px; }
+        .sb-logo { width: 90px; height: 90px; border-radius: 50%; border: 3px solid white; margin-bottom: 10px; }
 
-        .nav-btn { width: 100%; background: none; border: none; color: #adb5bd; padding: 18px 25px; text-align: left; font-size: 16px; cursor: pointer; display: flex; align-items: center; gap: 15px; transition: 0.3s; }
-        .nav-btn.active { color: white; background: rgba(255,255,255,0.1); border-left: 5px solid var(--s); }
+        .nav-btn { width: 100%; background: none; border: none; color: #adb5bd; padding: 18px 25px; text-align: left; font-size: 16px; cursor: pointer; display: flex; align-items: center; gap: 12px; }
+        .nav-btn.active { color: white; background: rgba(255,255,255,0.1); border-left: 4px solid var(--s); }
 
-        /* СЪДЪРЖАНИЕ */
+        /* CONTENT */
         .main { padding: 20px; max-width: 1200px; margin: 0 auto; }
-        .app-section { display: none; animation: fadeIn 0.4s ease; }
+        .app-section { display: none; }
         .app-section.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        .card { background: var(--w); padding: 22px; border-radius: 18px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-top: 5px solid var(--s); margin-bottom: 20px; }
-        .val { font-size: 35px; font-weight: bold; color: var(--p); margin: 8px 0; }
         
-        /* ТЪМЕН СЛОЙ ПРИ ОТВОРЕНО МЕНЮ */
-        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2050; backdrop-filter: blur(3px); }
+        .card { background: var(--w); padding: 20px; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-top: 4px solid var(--s); margin-bottom: 15px; }
+        .val { font-size: 32px; font-weight: bold; color: var(--p); margin: 5px 0; }
+        
+        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2050; }
         .overlay.active { display: block; }
 
-        @media (min-width: 769px) {
-            .sidebar { left: 0; box-shadow: none; }
-            .header, .overlay { display: none; }
-            .main { margin-left: 280px; padding: 40px; width: calc(100% - 280px); }
-        }
+        @media (min-width: 769px) { .sidebar { left: 0; } .header { display: none; } .main { margin-left: 280px; } }
     </style>
 </head>
-<body oncontextmenu="return false;">
+<body>
 
     <header class="header">
         <div class="logo-area">
-            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAACXBIWXMAAAsTAAALEwEAmpwYAAAEMElEQVR4nO2dS0hUURjHf+fO6DghSAtbe6AtInoQaREU9SAtatGidpG0atGidpG0atGidpG0atGiNq0iaRE9iB5ESAtbe6AtInoQaREU9SAtatGidpG0atGidpG0atGidpG0atGiNq0iaRE9iB5ESAtbe6AtInoQaREU9SAtatGidpG0atGidpG0atGidpG0atGiNq0iaRE9iB5ESAtbe6AtInoQaREU9SAtatGidpG0atGidpG0atGidpG0atGiNq0iaRE9iB5ESAtbe6AtInoQaREU9SAtatGidpG0atGidpG0atGidpG0atGiNq0iaRE9iB5ESAtbe6AtInoQaREU9SAtatGidpG0atGidpG0atGidpG0atGiNq0iaRE9iB5ESAtbe6AtInoQaREU9SAtatGidpG0atGidpG0atGidpG0atGiNq0iaRE9iB5ESAtbe6AtInoQaREU9SAtatGidpG0atGidpG0atGidpG0atGiNq0iaRE9iB5ESAtbe6AtInoQaREU9SAtatGidpG0atGidpG0atGidpG0atGiNq0iaRE9iB5ESAtbe6AtInoQaREU9SAtatGidpG0atGidpG0atGidpG0atGiNq0iaRE9iB5ESAtbe6AtInoQaREU9SAtatGidpG0atGidpG0atGidpG0atGiNq0iaRE9iB5ESAtbe6AtInoQaREU9SAtatGidpG0atGidpG0atGidpG0atGiNq0iaRE9iB5ESAtbe6AtInoQaREU9SAtatGidpG0atGidpG0atGidpG0atGiNq0iaRE9iB5ESAtbe6AtInoQaREU9SAtatGidpG0atGidpG0atGidpG0atGiNq0iaRE9iB5ESAtbe6AtInoQaREU9SAtatGidpG0atGidpG0atGidpG0atGiNq0iaRE9iB5ESAtbe6AtInoQaREU9SAtatGidpG0atGidpG0atGidpG0atGiNq0iaRE9iB5ESAtbe6AtInoQaREU9SAtatGidpG0atGidpG0atGidpG0atGiNq0iaRE9iB5ESAtbe6AtInoQaREU9SAtatGidpG0atGidpG0atGidpG0atGiNq0iaRE9iB5ESAtbe6AtInoQaREU9SAtatGidpG0atGidpG0atGidpG0atGiNq0iaRE9iB5ESAtbe6AtInoQaREU9SAtatGidpG0atGidpG0atGidpG0atGiNq0iaRE9iB5ESAtbe6AtInoQaREU9SAtatGidpG0atGidpG0atGidpG0atGiNq0iaRE9iB5ESAtbe6AtInoQaREU9SAtatGidpG0atGidpG0atGidpG0atGiNq0iaRE9iB5ESAtbe6AtInoQaREU9SAtatGidpG0atGidpG0atGidpG0atGiNq0iaRE9iB5ESAtbe6AtInoQaREU9SAtatGidpG0atGidpG0atGidpG0atGiNq0iaRE9iB5ESAtbe6AtInoQaREU9SAtatGidpG0atGidpG0atGidpG0atGi
-                
+            <img src="https://raw.githubusercontent.com/lifeweaverlifeweaver/smart-fermata-v2/main/assets/logo.png" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3047/3047928.png'" class="main-logo">
+            <b style="font-size: 1.1rem;">SmartFermata</b>
+        </div>
+        <button onclick="t()" style="background:none; border:none; color:white; font-size:30px;">☰</button>
+    </header>
+
+    <div class="overlay" id="ov" onclick="t()"></div>
+
+    <aside class="sidebar" id="sb">
+        <div class="sb-header">
+            <img src="https://raw.githubusercontent.com/lifeweaverlifeweaver/smart-fermata-v2/main/assets/logo.png" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3047/3047928.png'" class="sb-logo">
+            <h2 style="color:white; font-size: 1.2rem;">SmartFermata</h2>
+        </div>
+        <nav>
+            <button class="nav-btn active" onclick="show('dashboard', this)">📊 Табло</button>
+            <button class="nav-btn" onclick="show('horses', this)">🐎 График Коне</button>
+            <button class="nav-btn" onclick="show('finances', this)">💰 Финанси</button>
+            <button class="nav-btn" onclick="show('settings', this)">⚙️ Настройки</button>
+        </nav>
+    </aside>
+
+    <main class="main">
+        <section id="dashboard" class="app-section active">
+            <h1 style="font-size: 24px;">Здравейте, Цветелина! 👋</h1>
+            <p style="color:#888; margin-bottom:20px;">Конна База "Зорница"</p>
+            <div class="card"><small>Спестени такси</small><div class="val">144 €</div><p style="color:var(--s);">● Директен приход</p></div>
+            <div class="card" style="border-top-color:var(--p);"><small>Дневен Оборот</small><div class="val">480 €</div></div>
+        </section>
+
+        <section id="horses" class="app-section">
+            <h1>🐎 График Коне</h1>
+            <div class="card">Всички коне са в добро здраве.</div>
+        </section>
+
+        <section id="finances" class="app-section">
+            <h1>💰 Финанси</h1>
+            <div class="card">Очаквани приходи: 1,200 €</div>
+        </section>
+
+        <section id="settings" class="app-section">
+            <h1>⚙️ Настройки</h1>
+            <div class="card">Профил: Цветелина Стоянова</div>
+        </section>
+    </main>
+
+    <script>
+        function t() {
+            document.getElementById('sb').classList.toggle('active');
+            document.getElementById('ov').classList.toggle('active');
+        }
+
+        function show(id, btn) {
+            document.querySelectorAll('.app-section').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            if(window.innerWidth < 769) t();
+        }
+    </script>
+</body>
+</html>
