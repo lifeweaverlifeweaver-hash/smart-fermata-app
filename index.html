@@ -3,230 +3,133 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SmartFermata Enterprise Pro</title>
+    <title>SmartFermata Management</title>
     <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-database-compat.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --p: #10214a; --s: #27ae60; --bg: #f4f7f9; --danger: #e74c3c; --accent: #f39c12; }
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); color: #333; }
-        
-        /* Sidebar */
-        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: var(--p); transition: 0.3s; z-index: 1000; padding-top: 50px; color: white; box-shadow: 5px 0 15px rgba(0,0,0,0.3); }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); }
+        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: var(--p); transition: 0.3s; z-index: 1000; padding-top: 50px; color: white; }
         .sidebar.active { left: 0; }
-        .nav-item { padding: 18px 25px; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; font-size: 16px; }
+        .nav-item { padding: 18px 25px; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; }
         .nav-item i { margin-right: 15px; width: 25px; color: #3498db; text-align: center; }
-        .nav-item:active { background: rgba(255,255,255,0.1); }
-
         .top-bar { background: var(--p); color: white; padding: 15px; display: flex; align-items: center; position: sticky; top: 0; z-index: 900; }
-        
-        /* Cards */
-        .card { background: white; margin: 12px; padding: 20px; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); position: relative; border-left: 6px solid var(--p); }
-        .vet-card { border-left-color: var(--danger); }
-        .staff-card { border-left-color: var(--accent); }
-        .client-card { border-left-color: var(--s); }
-
-        input, select, textarea { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 10px; box-sizing: border-box; font-size: 16px; }
-        label { font-size: 11px; font-weight: bold; color: #777; text-transform: uppercase; display: block; margin-top: 10px; }
-        
-        .btn-main { background: var(--p); color: white; border: none; padding: 15px; border-radius: 10px; width: 100%; font-weight: bold; cursor: pointer; font-size: 16px; margin-top: 10px; }
-        .btn-pay { background: var(--s); }
-        
+        .card { background: white; margin: 12px; padding: 20px; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); border-left: 6px solid var(--p); position: relative; }
+        input, select, textarea { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 10px; box-sizing: border-box; }
+        .btn-main { background: var(--p); color: white; border: none; padding: 15px; border-radius: 10px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 10px; }
         #login-screen { position: fixed; inset: 0; background: var(--p); z-index: 5000; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; }
-        .logo-box { width: 110px; height: 110px; border-radius: 50%; background: white; padding: 5px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
-        .status-badge { position: absolute; top: 15px; right: 15px; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; color: white; }
+        .log-entry { font-size: 13px; padding: 10px; border-bottom: 1px solid #eee; }
     </style>
 </head>
 <body>
 
     <div id="login-screen">
-        <img src="logo.png" class="logo-box" onerror="this.src='https://cdn-icons-png.flaticon.com/512/616/616554.png'">
         <h1 style="margin-bottom:30px;">SmartFermata Pro</h1>
-        <button class="btn-main" style="background:white; color:var(--p); width:80%;" onclick="initApp('admin')">ВХОД СОБСТВЕНИК</button>
-        <button class="btn-main" style="background:var(--s); width:80%;" onclick="initApp('client')">ВХОД КЛИЕНТИ</button>
+        <button class="btn-main" style="background:white; color:var(--p); width:80%;" onclick="init('admin')">ВХОД СОБСТВЕНИК</button>
+        <button class="btn-main" style="background:var(--s); width:80%;" onclick="init('client')">ВХОД КЛИЕНТИ</button>
     </div>
 
     <div class="sidebar" id="sidebar">
         <div id="admin-nav" style="display:none;">
-            <div class="nav-item" onclick="show('fin')"><i class="fas fa-hand-holding-usd"></i> Приходи и Доходи</div>
+            <div class="nav-item" onclick="show('fin')"><i class="fas fa-chart-line"></i> Приходи и Доходи</div>
             <div class="nav-item" onclick="show('vet')"><i class="fas fa-stethoscope"></i> Ветеринарен Дневник</div>
             <div class="nav-item" onclick="show('staff')"><i class="fas fa-users-cog"></i> График Персонал</div>
             <div class="nav-item" onclick="show('horses_adm')"><i class="fas fa-horse"></i> Регистър Коне</div>
+            <div class="nav-item" onclick="show('stock_adm')"><i class="fas fa-warehouse"></i> Склад (Бали)</div>
             <div class="nav-item" onclick="show('vouchers_adm')"><i class="fas fa-ticket-alt"></i> Създай Ваучер</div>
         </div>
-        
         <div id="client-nav" style="display:none;">
             <div class="nav-item" onclick="show('booking')"><i class="fas fa-calendar-check"></i> Резервирай Езда</div>
-            <div class="nav-item" onclick="show('my_vouchers')"><i class="fas fa-tag"></i> Промоции</div>
         </div>
-
-        <div class="nav-item" onclick="location.reload()" style="color:#ff7675; margin-top:40px; border-top:1px solid rgba(255,255,255,0.1);">
-            <i class="fas fa-sign-out-alt"></i> Изход
-        </div>
+        <div class="nav-item" onclick="location.reload()" style="color:#ff7675; margin-top:40px;"><i class="fas fa-power-off"></i> Изход</div>
     </div>
 
     <div class="top-bar">
-        <i class="fas fa-bars" style="font-size:24px; margin-right:15px; cursor:pointer;" onclick="document.getElementById('sidebar').classList.toggle('active')"></i>
+        <i class="fas fa-bars" style="font-size:24px; margin-right:15px;" onclick="document.getElementById('sidebar').classList.toggle('active')"></i>
         <b id="page-title">Зареждане...</b>
     </div>
 
     <div id="app-content"></div>
 
     <script>
-        const firebaseConfig = {
+        const config = {
             apiKey: "AIzaSyAfkaWtQyWDHLOIXCG4CrpAOX3Nt9pmcpE",
             authDomain: "smartfermata.firebaseapp.com",
             databaseURL: "https://smartfermata-default-rtdb.europe-west1.firebasedatabase.app/",
             projectId: "smartfermata"
         };
-        firebase.initializeApp(firebaseConfig);
+        firebase.initializeApp(config);
         const db = firebase.database();
-        let currentRole = ''; let appData = null;
+        let role = ''; let data = null;
 
-        function initApp(role) {
-            currentRole = role;
+        function init(r) {
+            role = r;
             document.getElementById('login-screen').style.display = 'none';
-            
-            // СТРИКТНО РАЗДЕЛЕНИЕ НА МЕНЮТАТА
-            if(role === 'admin') {
-                document.getElementById('admin-nav').style.display = 'block';
-                document.getElementById('client-nav').style.display = 'none';
-            } else {
-                document.getElementById('admin-nav').style.display = 'none';
-                document.getElementById('client-nav').style.display = 'block';
-            }
-
-            db.ref('smart_fermata').on('value', (snap) => {
-                appData = snap.val();
-                if(!appData) { setupDB(); } 
-                else { show(role === 'admin' ? 'fin' : 'booking'); }
+            document.getElementById(r + '-nav').style.display = 'block';
+            db.ref('smart_fermata').on('value', (s) => {
+                data = s.val();
+                if(!data) setup(); else show(r === 'admin' ? 'fin' : 'booking');
             });
         }
 
-        function show(page) {
+        function show(p) {
             const content = document.getElementById('app-content');
-            const title = document.getElementById('page-title');
+            document.getElementById('page-title').innerText = p;
             content.innerHTML = '';
             document.getElementById('sidebar').classList.remove('active');
 
-            if(page === 'fin') {
-                title.innerText = "Финансов отчет";
-                content.innerHTML = `
-                    <div class="card" style="background:var(--p); color:white; text-align:center;">
-                        <p>ОБЩ ПРИХОД</p>
-                        <h1 style="font-size:35px;">${appData.income || 0} лв.</h1>
-                    </div>
-                    <div class="card">
-                        <h3>Последна транзакция</h3>
-                        <p>${appData.last_sale || "Няма записи"}</p>
-                    </div>`;
-            } else if(page === 'vet') {
-                title.innerText = "Ветеринарен дневник";
-                appData.horses.forEach((h, i) => {
-                    content.innerHTML += `
-                        <div class="card vet-card">
-                            <h3>🐎 ${h.name}</h3>
-                            <label>Последна ваксина</label>
-                            <input type="date" value="${h.lastVax || ''}" onchange="upd('horses/${i}/lastVax', this.value)">
-                            <label>Бележки за здравето</label>
-                            <textarea onchange="upd('horses/${i}/healthNotes', this.value)">${h.healthNotes || ''}</textarea>
-                        </div>`;
+            if(p === 'fin') {
+                content.innerHTML = `<div class="card" style="background:var(--p); color:white; text-align:center;"><h2>${data.income || 0} лв.</h2><p>Общ приход</p></div>
+                <div class="card"><h3>История на плащанията:</h3><div id="log"></div></div>`;
+                if(data.sales) {
+                    Object.values(data.sales).reverse().forEach(s => {
+                        document.getElementById('log').innerHTML += `<div class="log-entry"><b>${s.date}</b>: ${s.horse} - ${s.amount}лв.</div>`;
+                    });
+                }
+            } else if(p === 'stock_adm') {
+                content.innerHTML = `<div class="card"><h3>Наличност в склада</h3>
+                <label>Сено (Бали)</label><input type="number" id="hay" value="${data.stock.hay}">
+                <label>Овес (кг)</label><input type="number" id="oats" value="${data.stock.oats}">
+                <button class="btn-main" onclick="upd('stock/hay', document.getElementById('hay').value); upd('stock/oats', document.getElementById('oats').value); alert('Обновено!')">ОБНОВИ СКЛАД</button></div>`;
+            } else if(p === 'booking') {
+                data.horses.forEach((h, i) => {
+                    content.innerHTML += `<div class="card"><h3>${h.name} (${h.status})</h3>
+                    <input type="text" id="promo-${i}" placeholder="Промо код">
+                    <button class="btn-main" style="background:var(--s)" onclick="pay(${i})">ПЛАТИ ${h.price} лв.</button></div>`;
                 });
-            } else if(page === 'staff') {
-                title.innerText = "График Персонал";
-                const zones = ["Конюшня", "Пясъчник", "Езда", "Почистване"];
-                appData.staff.forEach((s, i) => {
-                    content.innerHTML += `
-                        <div class="card staff-card">
-                            <h3>👤 ${s.name}</h3>
-                            <label>Локация:</label>
-                            <select onchange="upd('staff/${i}/location', this.value)">
-                                ${zones.map(z => `<option value="${z}" ${s.location === z ? 'selected' : ''}>${z}</option>`).join('')}
-                            </select>
-                            <label>Смена:</label>
-                            <input type="text" value="${s.shift || ''}" onchange="upd('staff/${i}/shift', this.value)">
-                        </div>`;
-                });
-            } else if(page === 'booking') {
-                title.innerText = "Резервирай езда";
-                appData.horses.forEach((h, i) => {
-                    content.innerHTML += `
-                        <div class="card client-card">
-                            <span class="status-badge" style="background:${h.status==='Свободен'?'#27ae60':'#e74c3c'}">${h.status}</span>
-                            <h3>${h.name}</h3>
-                            <label>Услуга:</label>
-                            <select id="srv-${i}">
-                                <option value="${h.price}">Свободна езда - ${h.price} лв.</option>
-                                <option value="${parseInt(h.price)+15}">Обучение - ${parseInt(h.price)+15} лв.</option>
-                            </select>
-                            <input type="text" id="promo-${i}" placeholder="Промо код">
-                            <button class="btn-main btn-pay" onclick="pay(${i})">ПЛАТИ СЕГА</button>
-                        </div>`;
-                });
-            } else if(page === 'vouchers_adm') {
-                title.innerText = "Създай Ваучер";
-                content.innerHTML = `
-                    <div class="card">
-                        <h3>Генерирай код за отстъпка</h3>
-                        <input type="text" id="v-code" placeholder="Код (напр. PROMO50)">
-                        <select id="v-pct">
-                            <option value="10">10%</option><option value="20">20%</option><option value="50">50%</option><option value="80">80%</option>
-                        </select>
-                        <button class="btn-main" onclick="saveV()">АКТИВИРАЙ</button>
-                    </div>`;
-            } else if(page === 'horses_adm') {
-                title.innerText = "Регистър Коне";
-                appData.horses.forEach((h, i) => {
-                    content.innerHTML += `
-                        <div class="card">
-                            <label>Име</label><input type="text" value="${h.name}" onchange="upd('horses/${i}/name', this.value)">
-                            <label>Базова цена</label><input type="number" value="${h.price}" onchange="upd('horses/${i}/price', this.value)">
-                            <label>Статус</label>
-                            <select onchange="upd('horses/${i}/status', this.value)">
-                                <option ${h.status==='Свободен'?'selected':''}>Свободен</option>
-                                <option ${h.status==='Зает'?'selected':''}>Зает</option>
-                            </select>
-                        </div>`;
+            } else if(p === 'vouchers_adm') {
+                content.innerHTML = `<div class="card"><h3>Нов ваучер</h3>
+                <input type="text" id="v-code" placeholder="Код"><input type="number" id="v-pct" placeholder="% отстъпка">
+                <button class="btn-main" onclick="upd('vouchers/'+document.getElementById('v-code').value, document.getElementById('v-pct').value); alert('Готово!')">ЗАПАЗИ</button></div>`;
+            } else if(p === 'staff') {
+                data.staff.forEach((s, i) => {
+                    content.innerHTML += `<div class="card"><h3>${s.name}</h3><label>Локация</label>
+                    <select onchange="upd('staff/${i}/location', this.value)"><option ${s.location=='Конюшня'?'selected':''}>Конюшня</option><option ${s.location=='Езда'?'selected':''}>Езда</option></select></div>`;
                 });
             }
         }
 
         function pay(idx) {
-            const h = appData.horses[idx];
-            let p = parseInt(document.getElementById('srv-'+idx).value);
-            const pr = document.getElementById('promo-'+idx).value;
-            if(appData.vouchers && appData.vouchers[pr]) {
-                let d = appData.vouchers[pr];
-                p = p - (p * (d/100));
-                alert('Отстъпка ' + d + '% приложена!');
-            }
-            db.ref('smart_fermata/income').set((appData.income || 0) + p);
-            db.ref('smart_fermata/last_sale').set(h.name + " - " + p + " лв. (" + new Date().toLocaleTimeString() + ")");
-            alert('Успешно плащане: ' + p + ' лв.');
-        }
-
-        function saveV() {
-            const c = document.getElementById('v-code').value;
-            const pt = document.getElementById('v-pct').value;
-            if(c) { db.ref('smart_fermata/vouchers/' + c).set(pt); alert('Ваучерът е активен!'); }
+            const h = data.horses[idx];
+            let amt = parseInt(h.price);
+            const promo = document.getElementById('promo-'+idx).value;
+            if(data.vouchers && data.vouchers[promo]) amt -= (amt * (data.vouchers[promo]/100));
+            
+            db.ref('smart_fermata/income').set((data.income || 0) + amt);
+            db.ref('smart_fermata/sales').push({ horse: h.name, amount: amt, date: new Date().toLocaleString() });
+            alert('Платено: ' + amt + ' лв.');
         }
 
         function upd(p, v) { db.ref('smart_fermata/' + p).set(v); }
 
-        function setupDB() {
-            const init = {
+        function setup() {
+            db.ref('smart_fermata').set({
                 income: 0,
-                horses: [
-                    {name:"Грохот", price:40, status:"Свободен", lastVax:"2026-01-01", healthNotes:"Здрав"},
-                    {name:"Звезда", price:50, status:"Свободен", lastVax:"2026-02-01", healthNotes:"Здрава"}
-                ],
-                staff: [
-                    {name: "Иван", location: "Конюшня", shift: "08:00-17:00"},
-                    {name: "Мария", location: "Езда", shift: "09:00-18:00"}
-                ],
-                vouchers: { "START": 10 }
-            };
-            db.ref('smart_fermata').set(init);
+                stock: { hay: 50, oats: 100 },
+                horses: [{name:"Грохот", price:40, status:"Свободен"}, {name:"Звезда", price:50, status:"Свободен"}],
+                staff: [{name:"Иван", location:"Конюшня"}]
+            });
         }
     </script>
 </body>
