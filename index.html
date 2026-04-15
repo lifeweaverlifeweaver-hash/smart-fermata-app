@@ -8,134 +8,200 @@
     <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-database-compat.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --p: #10214a; --s: #27ae60; --bg: #f0f4f8; --danger: #e74c3c; }
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); color: #333; }
+        :root { --p: #10214a; --s: #27ae60; --bg: #f0f4f8; --danger: #e74c3c; --accent: #f39c12; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); color: #333; overflow-x: hidden; }
         
-        /* Navigation */
-        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: var(--p); transition: 0.3s; z-index: 1000; padding-top: 50px; color: white; }
+        /* Sidebar Navigation */
+        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: var(--p); transition: 0.3s; z-index: 1000; padding-top: 50px; color: white; box-shadow: 4px 0 15px rgba(0,0,0,0.3); }
         .sidebar.active { left: 0; }
-        .nav-item { padding: 15px 25px; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; }
-        .nav-item i { margin-right: 15px; color: #3498db; width: 20px; }
-        .top-bar { background: var(--p); color: white; padding: 15px; display: flex; align-items: center; position: sticky; top: 0; z-index: 900; }
+        .nav-item { padding: 18px 25px; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; font-size: 16px; }
+        .nav-item i { margin-right: 15px; color: #3498db; width: 25px; text-align: center; }
+        .nav-item:active { background: rgba(255,255,255,0.1); }
+
+        .top-bar { background: var(--p); color: white; padding: 15px; display: flex; align-items: center; position: sticky; top: 0; z-index: 900; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
+        .menu-btn { font-size: 24px; cursor: pointer; margin-right: 15px; }
         
-        /* UI Elements */
-        .card { background: white; margin: 12px; padding: 15px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border-left: 5px solid var(--p); }
+        /* Cards & UI */
+        .card { background: white; margin: 12px; padding: 20px; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); position: relative; border-left: 6px solid var(--p); }
         .vet-card { border-left-color: var(--danger); }
-        .staff-card { border-left-color: #f39c12; }
+        .staff-card { border-left-color: var(--accent); }
+        .client-card { border-left-color: var(--s); }
+
+        input, select, textarea { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 10px; box-sizing: border-box; font-size: 16px; }
+        label { font-size: 11px; font-weight: bold; color: #777; text-transform: uppercase; display: block; margin-top: 10px; }
         
-        input, select, textarea { width: 100%; padding: 10px; margin: 5px 0; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; }
-        label { font-size: 11px; font-weight: bold; color: #777; text-transform: uppercase; }
-        .btn { background: var(--p); color: white; border: none; padding: 12px; border-radius: 8px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .btn-action { background: var(--p); color: white; border: none; padding: 15px; border-radius: 10px; width: 100%; font-weight: bold; cursor: pointer; font-size: 16px; margin-top: 10px; }
+        .btn-pay { background: var(--s); }
         
-        #login-screen { position: fixed; inset: 0; background: var(--p); z-index: 5000; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; }
+        #login-screen { position: fixed; inset: 0; background: var(--p); z-index: 5000; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; color: white; }
+        .logo-main { width: 120px; height: 120px; border-radius: 50%; background: white; padding: 5px; margin-bottom: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
+        .status-badge { position: absolute; top: 15px; right: 15px; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; color: white; }
     </style>
 </head>
 <body>
 
     <div id="login-screen">
-        <img src="logo.png" style="width: 100px; border-radius: 50%; background: white; padding: 5px; margin-bottom: 20px;">
-        <h1>SmartFermata Pro</h1>
-        <button class="btn" style="background:white; color:var(--p); width:80%;" onclick="start('admin')">АДМИНИСТРАТОР</button>
-        <button class="btn" style="background:var(--s); width:80%;" onclick="start('client')">КЛИЕНТИ</button>
+        <img src="logo.png" class="logo-main" onerror="this.src='https://cdn-icons-png.flaticon.com/512/616/616554.png'">
+        <h1 style="margin-bottom:30px;">SmartFermata Pro</h1>
+        <button class="btn-action" style="background:white; color:var(--p); width:80%;" onclick="initApp('admin')">ВХОД СОБСТВЕНИК</button>
+        <button class="btn-action" style="background:var(--s); width:80%;" onclick="initApp('client')">ВХОД КЛИЕНТИ</button>
     </div>
 
-    <div class="sidebar" id="menu">
-        <div id="admin-nav">
-            <div class="nav-item" onclick="show('fin')"><i class="fas fa-wallet"></i> Приходи и Отчети</div>
-            <div class="nav-item" onclick="show('vet')"><i class="fas fa-first-aid"></i> Ветеринарен Дневник</div>
-            <div class="nav-item" onclick="show('staff')"><i class="fas fa-users-cog"></i> График Персонал</div>
-            <div class="nav-item" onclick="show('horses')"><i class="fas fa-horse"></i> Регистър Коне</div>
-            <div class="nav-item" onclick="show('stock')"><i class="fas fa-warehouse"></i> Склад</div>
+    <div class="sidebar" id="sidebar">
+        <div id="admin-nav" style="display:none;">
+            <div class="nav-item" onclick="render('reports')"><i class="fas fa-chart-line"></i> Приходи и Доходи</div>
+            <div class="nav-item" onclick="render('vet')"><i class="fas fa-hand-holding-med"></i> Ветеринарен Дневник</div>
+            <div class="nav-item" onclick="render('staff')"><i class="fas fa-id-badge"></i> График Персонал</div>
+            <div class="nav-item" onclick="render('horses_admin')"><i class="fas fa-horse"></i> Регистър Коне</div>
+            <div class="nav-item" onclick="render('vouchers_admin')"><i class="fas fa-ticket-alt"></i> Ваучери</div>
         </div>
-        <div class="nav-item" onclick="location.reload()" style="color:#ff7675; margin-top:30px;"><i class="fas fa-sign-out-alt"></i> Изход</div>
+        
+        <div id="client-nav" style="display:none;">
+            <div class="nav-item" onclick="render('booking')"><i class="fas fa-calendar-check"></i> Резервация на езда</div>
+            <div class="nav-item" onclick="render('promo')"><i class="fas fa-percent"></i> Моите отстъпки</div>
+        </div>
+
+        <div class="nav-item" onclick="location.reload()" style="color:#ff7675; margin-top:40px; border-top:1px solid rgba(255,255,255,0.1);">
+            <i class="fas fa-power-off"></i> Изход
+        </div>
     </div>
 
     <div class="top-bar">
-        <i class="fas fa-bars" style="font-size:24px; margin-right:20px;" onclick="document.getElementById('menu').classList.toggle('active')"></i>
-        <b id="page-title">SmartFermata</b>
+        <i class="fas fa-bars menu-btn" onclick="document.getElementById('sidebar').classList.toggle('active')"></i>
+        <b id="view-title">SmartFermata</b>
     </div>
 
-    <div id="app-body"></div>
+    <div id="content"></div>
 
     <script>
-        const config = {
+        const firebaseConfig = {
             apiKey: "AIzaSyAfkaWtQyWDHLOIXCG4CrpAOX3Nt9pmcpE",
             authDomain: "smartfermata.firebaseapp.com",
             databaseURL: "https://smartfermata-default-rtdb.europe-west1.firebasedatabase.app/",
             projectId: "smartfermata"
         };
-        firebase.initializeApp(config);
+        firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
-        let currentRole = ''; let appData = null;
+        let currentRole = ''; let data = null;
 
-        function start(role) {
-            currentRole = role; document.getElementById('login-screen').style.display = 'none';
-            db.ref('smart_fermata').on('value', (s) => { 
-                appData = s.val(); 
-                if(!appData) { seedData(); } else { show(role === 'admin' ? 'fin' : 'booking'); }
+        function initApp(role) {
+            currentRole = role;
+            document.getElementById('login-screen').style.display = 'none';
+            
+            // Показване на правилното меню
+            if(role === 'admin') { document.getElementById('admin-nav').style.display = 'block'; }
+            else { document.getElementById('client-nav').style.display = 'block'; }
+
+            db.ref('smart_fermata').on('value', (snap) => {
+                data = snap.val();
+                if(!data) { setupDatabase(); } 
+                else { render(role === 'admin' ? 'reports' : 'booking'); }
             });
         }
 
-        function show(page) {
-            const container = document.getElementById('app-body');
-            const title = document.getElementById('page-title');
-            container.innerHTML = ''; document.getElementById('menu').classList.remove('active');
+        function render(page) {
+            const container = document.getElementById('content');
+            const title = document.getElementById('view-title');
+            container.innerHTML = '';
+            document.getElementById('sidebar').classList.remove('active');
 
-            if(page === 'vet') {
-                title.innerText = "Ветеринарен Дневник";
-                appData.horses.forEach((h, i) => {
+            if(page === 'reports') {
+                title.innerText = "Финансов отчет";
+                container.innerHTML = `
+                    <div class="card" style="background:var(--p); color:white; text-align:center;">
+                        <p>Общ натрупан доход</p>
+                        <h1 style="font-size:36px;">${data.income || 0} лв.</h1>
+                    </div>
+                    <div class="card">
+                        <h3>Последна активност</h3>
+                        <p>${data.last_sale || "Няма регистрирани продажби"}</p>
+                    </div>`;
+            } else if(page === 'vet') {
+                title.innerText = "Ветеринарни грижи";
+                data.horses.forEach((h, i) => {
                     container.innerHTML += `
                         <div class="card vet-card">
-                            <h3>🚑 ${h.name}</h3>
-                            <label>Последна Ваксина</label>
-                            <input type="date" value="${h.lastVax || ''}" onchange="upd('horses/${i}/lastVax', this.value)">
-                            <label>Здравен статус / Бележки</label>
-                            <textarea onchange="upd('horses/${i}/healthNotes', this.value)">${h.healthNotes || ''}</textarea>
+                            <h3>🐎 ${h.name}</h3>
+                            <label>Последна ваксина / Преглед</label>
+                            <input type="date" value="${h.lastVax || ''}" onchange="update('horses/${i}/lastVax', this.value)">
+                            <label>Здравен статус и бележки</label>
+                            <textarea rows="2" onchange="update('horses/${i}/healthNotes', this.value)">${h.healthNotes || ''}</textarea>
                         </div>`;
                 });
             } else if(page === 'staff') {
-                title.innerText = "График и Локации";
-                const sectors = ["Пясъчник", "Конюшня", "Езда с клиенти", "Почистване"];
-                appData.staff.forEach((s, i) => {
+                title.innerText = "График на персонала";
+                const zones = ["Конюшня", "Пясъчник", "Езда с клиенти", "Склад", "Почивка"];
+                data.staff.forEach((s, i) => {
                     container.innerHTML += `
                         <div class="card staff-card">
                             <h3>👤 ${s.name}</h3>
-                            <label>Работно място в момента:</label>
-                            <select onchange="upd('staff/${i}/location', this.value)">
-                                ${sectors.map(sec => `<option value="${sec}" ${s.location === sec ? 'selected' : ''}>${sec}</option>`).join('')}
+                            <label>Работна зона в момента:</label>
+                            <select onchange="update('staff/${i}/location', this.value)">
+                                ${zones.map(z => `<option value="${z}" ${s.location === z ? 'selected' : ''}>${z}</option>`).join('')}
                             </select>
-                            <label>Смяна / Часове:</label>
-                            <input type="text" value="${s.shift || ''}" onchange="upd('staff/${i}/shift', this.value)">
+                            <label>Работно време / Смяна</label>
+                            <input type="text" value="${s.shift || ''}" onchange="update('staff/${i}/shift', this.value)">
                         </div>`;
                 });
-            } else if(page === 'fin') {
-                title.innerText = "Финанси и Отчети";
-                let total = appData.income || 0;
+            } else if(page === 'booking') {
+                title.innerText = "Резервация на езда";
+                data.horses.forEach((h, i) => {
+                    container.innerHTML += `
+                        <div class="card client-card">
+                            <span class="status-badge" style="background:${h.status==='Свободен'?'#27ae60':'#e74c3c'}">${h.status}</span>
+                            <h3>${h.name}</h3>
+                            <label>Изберете тип услуга:</label>
+                            <select id="srv-${i}">
+                                <option value="${h.price}">Свободна езда - ${h.price} лв.</option>
+                                <option value="${parseInt(h.price)+20}">Обучение с инструктор - ${parseInt(h.price)+20} лв.</option>
+                            </select>
+                            <input type="text" id="promo-${i}" placeholder="Въведете ваучер за отстъпка">
+                            <button class="btn-action btn-pay" onclick="processPayment(${i})">ПЛАТИ И РЕЗЕРВИРАЙ</button>
+                        </div>`;
+                });
+            } else if(page === 'vouchers_admin') {
+                title.innerText = "Управление на ваучери";
                 container.innerHTML = `
-                    <div class="card" style="background:var(--p); color:white; text-align:center;">
-                        <h2>${total} лв.</h2><p>Общ доход</p>
-                    </div>
-                    <div class="card"><h3>Последни активности:</h3><p>${appData.last_sale || 'Няма данни'}</p></div>`;
+                    <div class="card">
+                        <h3>Генерирай нов код</h3>
+                        <input type="text" id="new-v-code" placeholder="Код (напр. SUMMER50)">
+                        <label>Процент отстъпка</label>
+                        <select id="new-v-pct">
+                            <option value="5">5%</option><option value="10">10%</option><option value="20">20%</option><option value="50">50%</option><option value="80">80%</option>
+                        </select>
+                        <button class="btn-action" onclick="addVoucher()">АКТИВИРАЙ ВАУЧЕРА</button>
+                    </div>`;
+            } else if(page === 'horses_admin') {
+                title.innerText = "Регистър Коне";
+                data.horses.forEach((h, i) => {
+                    container.innerHTML += `
+                        <div class="card">
+                            <label>Име</label><input type="text" value="${h.name}" onchange="update('horses/${i}/name', this.value)">
+                            <label>Базова цена за час</label><input type="number" value="${h.price}" onchange="update('horses/${i}/price', this.value)">
+                            <label>Текущ статус</label>
+                            <select onchange="update('horses/${i}/status', this.value)">
+                                <option ${h.status==='Свободен'?'selected':''}>Свободен</option>
+                                <option ${h.status==='Зает'?'selected':''}>Зает</option>
+                            </select>
+                        </div>`;
+                });
             }
-            // ... допълнителни секции за склад и коне
         }
 
-        function upd(p, v) { db.ref('smart_fermata/' + p).set(v); }
-
-        function seedData() {
-            const initial = {
-                horses: [
-                    {name:"Грохот", price:"40", status:"Свободен", lastVax:"2026-01-10", healthNotes:"Здрав"},
-                    {name:"Звезда", price:"50", status:"Зает", lastVax:"2026-02-15", healthNotes:"Нужда от нови подкови"}
-                ],
-                staff: [
-                    {name: "Иван Иванов", location: "Конюшня", shift: "08:00 - 17:00"},
-                    {name: "Мария Петрова", location: "Езда с клиенти", shift: "10:00 - 19:00"}
-                ],
-                income: 0
-            };
-            db.ref('smart_fermata').set(initial);
+        function processPayment(idx) {
+            const h = data.horses[idx];
+            let price = parseInt(document.getElementById('srv-'+idx).value);
+            const promo = document.getElementById('promo-'+idx).value;
+            
+            if(data.vouchers && data.vouchers[promo]) {
+                let d = data.vouchers[promo];
+                price = price - (price * (d/100));
+                alert('Успешно приложена отстъпка от ' + d + '%!');
+            }
+            
+            db.ref('smart_fermata/income').set((data.income || 0) + price);
+            db.ref('smart_fermata/last_sale').set(h.name + " - " + price + " лв. (" + new Date().toLocaleTimeString() + ")");
+            alert('Плащането от ' + price + ' лв. е успешно! Кончето е резервирано.');
         }
-    </script>
-</body>
-</html>
+
+        function
