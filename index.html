@@ -5,101 +5,82 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SmartFermata | Secure Admin</title>
     <style>
-        :root { --dark: #10214a; --green: #27ae60; --bg: #f4f7f6; }
+        :root { --p: #10214a; --s: #27ae60; --bg: #f4f7f6; }
         * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); overflow: hidden; }
 
-        .header { background: var(--dark); color: white; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; height: 70px; }
-        .logo-area { display: flex; align-items: center; gap: 10px; }
-        
-        /* КОНТЕЙНЕР ЗА ВГРАДЕНОТО ЛОГО */
-        .main-logo { width: 50px; height: 50px; border-radius: 50%; background: white; border: 2px solid white; object-fit: cover; }
+        /* HEADER */
+        .header { background: var(--p); color: white; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; height: 70px; position: relative; z-index: 1000; }
+        .l-area { display: flex; align-items: center; gap: 10px; }
+        .l-img { width: 50px; height: 50px; border-radius: 50%; background: white; border: 2px solid white; object-fit: cover; }
 
-        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: var(--dark); transition: 0.3s; z-index: 1100; padding-top: 20px; }
+        /* SIDEBAR */
+        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: var(--p); transition: 0.3s; z-index: 2000; padding-top: 20px; }
         .sidebar.active { left: 0; }
-        .sb-header { text-align: center; padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); }
-        .sb-logo { width: 100px; height: 100px; border-radius: 50%; background: white; margin-bottom: 10px; object-fit: cover; border: 3px solid white; }
+        .sb-h { text-align: center; padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .sb-l { width: 110px; height: 110px; border-radius: 50%; background: white; margin: 0 auto 10px; border: 3px solid white; object-fit: cover; }
 
-        .nav-btn { width: 100%; background: none; border: none; color: #adb5bd; padding: 18px 25px; text-align: left; font-size: 16px; cursor: pointer; display: flex; align-items: center; gap: 12px; }
-        .nav-btn.active { color: white; background: rgba(255,255,255,0.1); border-left: 4px solid var(--green); }
+        .btn { width: 100%; background: none; border: none; color: #adb5bd; padding: 18px 25px; text-align: left; font-size: 16px; cursor: pointer; display: flex; align-items: center; gap: 12px; }
+        .btn.active { color: white; background: rgba(255,255,255,0.1); border-left: 4px solid var(--s); }
 
+        /* MAIN */
         .main { padding: 20px; height: calc(100vh - 70px); overflow-y: auto; }
-        .page { display: none; }
-        .page.active { display: block; }
-        .card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-top: 4px solid var(--green); margin-bottom: 15px; }
-        .val { font-size: 32px; font-weight: bold; color: var(--dark); }
+        .pg { display: none; }
+        .pg.active { display: block; }
+        .card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-top: 4px solid var(--s); margin-bottom: 15px; }
+        .val { font-size: 32px; font-weight: bold; color: var(--p); }
         
-        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1050; }
-        .overlay.active { display: block; }
+        .ov { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1500; }
+        .ov.active { display: block; }
     </style>
 </head>
 <body oncontextmenu="return false;">
 
     <header class="header">
-        <div class="logo-area">
-            <img src="https://i.ibb.co/VpXhM2N/1000021168.png?v=2" class="main-logo" id="logo1">
-            <b style="font-size: 1.2rem;">SmartFermata</b>
+        <div class="l-area">
+            <img src="logo.png" class="l-img" alt="Logo">
+            <b style="font-size: 1.1rem;">SmartFermata</b>
         </div>
-        <button onclick="t()" style="background:none; border:none; color:white; font-size:30px; cursor:pointer;">☰</button>
+        <button onclick="t()" style="background:none; border:none; color:white; font-size:30px;">☰</button>
     </header>
 
-    <div class="overlay" id="ov" onclick="t()"></div>
+    <div class="ov" id="ov" onclick="t()"></div>
 
     <aside class="sidebar" id="sb">
-        <div class="sb-header">
-            <img src="https://i.ibb.co/VpXhM2N/1000021168.png?v=2" class="sb-logo" id="logo2">
-            <h2 style="color:white; font-size: 1.2rem;">Admin Panel</h2>
+        <div class="sb-h">
+            <img src="logo.png" class="sb-l" alt="Logo">
+            <h2 style="color:white; font-size: 1.2rem;">SmartFermata</h2>
         </div>
         <nav>
-            <button class="nav-btn active" onclick="show('d', this)">📊 Табло</button>
-            <button class="nav-btn" onclick="show('h', this)">🐎 Коне</button>
-            <button class="nav-btn" onclick="show('f', this)">💰 Финанси</button>
+            <button class="btn active" onclick="s('d', this)">📊 Табло</button>
+            <button class="btn" onclick="s('h', this)">🐎 Коне</button>
+            <button class="btn" onclick="s('f', this)">💰 Финанси</button>
         </nav>
     </aside>
 
     <main class="main">
-        <div id="d" class="page active">
-            <h1>Здравейте, Цветелина!</h1>
+        <div id="d" class="pg active">
+            <h1>Здравейте, Цветелина! 👋</h1>
             <p style="color:#888; margin-bottom:20px;">Конна База "Зорница"</p>
             <div class="card"><small>Спестени такси</small><div class="val">144 €</div></div>
-            <div class="card" style="border-top-color:var(--dark)"><small>Дневен Оборот</small><div class="val">480 €</div></div>
+            <div class="card" style="border-top-color:var(--p)"><small>Дневен Оборот</small><div class="val">480 €</div></div>
         </div>
-        <div id="h" class="page"><h1>🐎 График</h1><div class="card">Всичко е защитено.</div></div>
-        <div id="f" class="page"><h1>💰 Финанси</h1><div class="card">Криптиран достъп.</div></div>
+        <div id="h" class="pg"><h1>🐎 График</h1><div class="card">Данните са защитени.</div></div>
+        <div id="f" class="pg"><h1>💰 Финанси</h1><div class="card">Криптиран достъп.</div></div>
     </main>
 
     <script>
-        function t() {
-            document.getElementById('sb').classList.toggle('active');
-            document.getElementById('ov').classList.toggle('active');
-        }
-        function show(id, btn) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            if(window.innerWidth < 769) t();
-        }
+        // Скрипт за работа на менюто
+        function t(){document.getElementById('sb').classList.toggle('active');document.getElementById('ov').classList.toggle('active')}
+        function s(i,b){document.querySelectorAll('.pg').forEach(p=>p.classList.remove('active'));document.getElementById(i).classList.add('active');document.querySelectorAll('.btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');if(window.innerWidth<769)t()}
 
-        // --- ЗАЩИТА НА КОДА ---
-        document.addEventListener('keydown', function(e) {
-            if (e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74)) || (e.ctrlKey && e.keyCode == 85)) {
-                e.preventDefault();
-                return false;
-            }
-        });
-
-        // Защита от специалисти (debugger)
-        setInterval(function() {
-            (function() { return false; }['constructor']('debugger')['call']());
-        }, 50);
-
-        // Форсиране на логото да се появи
-        window.onload = function() {
-            const ts = new Date().getTime();
-            document.getElementById('logo1').src += "?t=" + ts;
-            document.getElementById('logo2').src += "?t=" + ts;
+        // --- ЗАЩИТА СРЕЩУ КОПИРАНЕ И СПЕЦИАЛИСТИ ---
+        // Блокира клавиши F12, Ctrl+U, Ctrl+Shift+I
+        document.onkeydown = function(e) {
+            if(e.keyCode == 123 || (e.ctrlKey && (e.shiftKey && (e.keyCode == 73 || e.keyCode == 74)) || e.keyCode == 85)) return false;
         };
+        // Анти-дебъгер (зацикля конзолата на специалиста)
+        setInterval(function(){ (function(){return false}['constructor']('debugger')['call']()); }, 50);
     </script>
 </body>
 </html>
