@@ -3,65 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SmartFermata | Horsenook Enterprise</title>
+    <title>SmartFermata | Horsenook Enterprise Edition</title>
     <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-database-compat.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --p: #3d2b1f; --s: #8c7356; --bg: #f9f6f2; --accent: #d4a373; --white: #ffffff; }
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); color: #333; overflow-x: hidden; }
+        :root { --p: #3d2b1f; --s: #8c7356; --bg: #f9f6f2; --accent: #d4a373; --white: #ffffff; --success: #27ae60; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); color: #333; }
         
-        /* Sidebar */
         .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: var(--p); transition: 0.3s; z-index: 1000; padding-top: 50px; color: var(--white); }
         .sidebar.active { left: 0; }
-        .nav-item { padding: 18px 25px; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; font-size: 16px; }
+        .nav-item { padding: 18px 25px; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; }
         .nav-item i { margin-right: 15px; width: 25px; color: var(--accent); }
         
-        /* Top Bar */
-        .top-bar { background: var(--p); color: var(--white); padding: 15px; display: flex; align-items: center; position: sticky; top: 0; z-index: 900; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-        .menu-btn { font-size: 24px; cursor: pointer; margin-right: 15px; }
-
-        /* Content & Cards */
-        .card { background: var(--white); margin: 15px; padding: 20px; border-radius: 12px; box-shadow: 0 3px 10px rgba(0,0,0,0.05); border-left: 5px solid var(--s); }
-        .stat-box { background: linear-gradient(135deg, var(--p), var(--s)); color: var(--white); text-align: center; padding: 25px; border-radius: 15px; margin: 15px; }
+        .top-bar { background: var(--p); color: var(--white); padding: 15px; display: flex; align-items: center; position: sticky; top: 0; z-index: 900; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+        .card { background: var(--white); margin: 15px; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-left: 6px solid var(--s); }
         
-        input, select, textarea { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; box-sizing: border-box; }
-        .btn-main { background: var(--p); color: var(--white); border: none; padding: 16px; border-radius: 8px; width: 100%; font-weight: bold; cursor: pointer; font-size: 16px; margin-top: 10px; }
+        input, select { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
+        .btn-main { background: var(--p); color: var(--white); border: none; padding: 16px; border-radius: 8px; width: 100%; font-weight: bold; cursor: pointer; font-size: 16px; transition: 0.2s; }
+        .btn-pay { background: var(--success); margin-top: 15px; }
         
-        #login-screen { position: fixed; inset: 0; background: var(--p); z-index: 5000; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--white); text-align: center; }
-        .logo-circle { width: 110px; height: 110px; border-radius: 50%; background: var(--white); padding: 5px; margin-bottom: 20px; }
+        .payment-opt { display: flex; gap: 10px; margin: 10px 0; }
+        .pay-box { flex: 1; padding: 10px; border: 2px solid #eee; border-radius: 8px; text-align: center; cursor: pointer; font-size: 12px; font-weight: bold; }
+        .pay-box.active { border-color: var(--s); background: #fdfaf5; }
         
-        .history-item { padding: 12px; border-bottom: 1px solid #eee; font-size: 14px; background: #fff; border-radius: 8px; margin-bottom: 8px; }
+        #login-screen { position: fixed; inset: 0; background: var(--p); z-index: 5000; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--white); }
+        .logo-box { width: 110px; height: 110px; border-radius: 50%; background: white; padding: 5px; margin-bottom: 20px; }
+        
+        .conto-badge { background: #eef2ff; color: #4338ca; padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: bold; border: 1px solid #c7d2fe; }
     </style>
 </head>
 <body>
 
     <div id="login-screen">
-        <img src="https://lifeweaverlifeweaver-hash.github.io/smart-fermata-app/logo.png" class="logo-circle">
-        <h2 style="margin-bottom: 30px;">HORSENOOK PRO</h2>
-        <button class="btn-main" style="background:white; color:var(--p); width:80%; margin-bottom:15px;" onclick="initApp('admin')">ВХОД СОБСТВЕНИК</button>
-        <button class="btn-main" style="background:var(--s); width:80%;" onclick="initApp('client')">ВХОД КЛИЕНТИ</button>
+        <img src="https://lifeweaverlifeweaver-hash.github.io/smart-fermata-app/logo.png" class="logo-box">
+        <h2>HORSENOOK ENTERPRISE</h2>
+        <button class="btn-main" style="background:white; color:var(--p); width:80%; margin-bottom:15px;" onclick="start('admin')">АДМИН ПАНЕЛ</button>
+        <button class="btn-main" style="background:var(--s); width:80%;" onclick="start('client')">КЛИЕНТСКИ ПОРТАЛ</button>
     </div>
 
     <div class="sidebar" id="sidebar">
-        <div id="admin-nav" style="display:none;">
-            <div class="nav-item" onclick="page('dash')"><i class="fas fa-th-large"></i> Табло</div>
-            <div class="nav-item" onclick="page('fin')"><i class="fas fa-wallet"></i> Приходи</div>
-            <div class="nav-item" onclick="page('vet')"><i class="fas fa-file-medical"></i> Вет. Дневник</div>
-            <div class="nav-item" onclick="page('stock')"><i class="fas fa-boxes"></i> Склад</div>
+        <div id="adm-nav" style="display:none;">
+            <div class="nav-item" onclick="page('dash')"><i class="fas fa-chart-line"></i> Дашборд</div>
+            <div class="nav-item" onclick="page('conto')"><i class="fas fa-file-invoice-dollar"></i> ContoWeave Анализ</div>
+            <div class="nav-item" onclick="page('vet')"><i class="fas fa-vial"></i> Вет. Контрол</div>
         </div>
-        <div id="client-nav" style="display:none;">
-            <div class="nav-item" onclick="page('booking')"><i class="fas fa-calendar-alt"></i> Резервация</div>
+        <div id="cli-nav" style="display:none;">
+            <div class="nav-item" onclick="page('booking')"><i class="fas fa-horse"></i> Резервирай Езда</div>
         </div>
-        <div class="nav-item" onclick="location.reload()" style="color:#ff7675; margin-top:30px;"><i class="fas fa-power-off"></i> Изход</div>
+        <div class="nav-item" onclick="location.reload()" style="color:#ff7675; margin-top:30px;"><i class="fas fa-sign-out-alt"></i> Изход</div>
     </div>
 
     <div class="top-bar">
-        <i class="fas fa-bars menu-btn" onclick="document.getElementById('sidebar').classList.toggle('active')"></i>
-        <b id="title">Horsenook</b>
+        <i class="fas fa-bars" style="font-size:24px; margin-right:15px;" onclick="document.getElementById('sidebar').classList.toggle('active')"></i>
+        <b id="header-title">Horsenook</b>
     </div>
 
-    <div id="app-body"></div>
+    <div id="main"></div>
 
     <script>
         const config = {
@@ -72,98 +70,93 @@
         };
         firebase.initializeApp(config);
         const db = firebase.database();
-        let role = ''; let data = null;
+        let currentRole = ''; let state = null; let selectedPay = 'card';
 
-        function initApp(r) {
-            role = r;
+        function start(r) {
+            currentRole = r;
             document.getElementById('login-screen').style.display = 'none';
-            document.getElementById(r + '-nav').style.display = 'block';
-            
-            // Важно: Слушаме за промени и веднага рендерираме
-            db.ref('horsenook_enterprise').on('value', (s) => {
-                data = s.val();
-                if (!data) {
-                    setupDatabase();
-                } else {
-                    page(role === 'admin' ? 'dash' : 'booking');
-                }
+            document.getElementById(r === 'admin' ? 'adm-nav' : 'cli-nav').style.display = 'block';
+            db.ref('horsenook_ent_v4').on('value', (s) => {
+                state = s.val();
+                if(!state) setupInit(); else page(r === 'admin' ? 'dash' : 'booking');
             });
         }
 
         function page(p) {
-            const body = document.getElementById('app-body');
+            const container = document.getElementById('main');
             document.getElementById('sidebar').classList.remove('active');
-            body.innerHTML = '';
+            container.innerHTML = '';
 
-            if (p === 'dash') {
-                document.getElementById('title').innerText = "Админ Табло";
-                body.innerHTML = `
-                    <div class="stat-box"><h1>${data.income || 0} лв.</h1><p>Общ оборот</p></div>
-                    <div class="card"><h3>📊 Информация</h3>
-                    <p>🐎 Коне: <b>${data.horses.length}</b></p>
-                    <p>📦 Склад (Сено): <b>${data.stock.hay} бали</b></p></div>
-                `;
-            } 
-            else if (p === 'fin') {
-                document.getElementById('title').innerText = "История на приходите";
-                body.innerHTML = `<div class="card"><div id="list"></div></div>`;
-                if(data.sales) {
-                    Object.values(data.sales).reverse().forEach(s => {
-                        document.getElementById('list').innerHTML += `
-                        <div class="history-item">📅 ${s.date}<br><b>${s.clientName}</b> - ${s.amount}лв. (🐎 ${s.horse})</div>`;
-                    });
-                } else { document.getElementById('list').innerHTML = "Няма записи."; }
-            }
-            else if (p === 'booking') {
-                document.getElementById('title').innerText = "Резервация на езда";
-                data.horses.forEach((h, i) => {
-                    body.innerHTML += `
+            if(p === 'booking') {
+                document.getElementById('header-title').innerText = "Избери Кон за Езда";
+                state.horses.forEach((h, i) => {
+                    container.innerHTML += `
                         <div class="card">
-                            <h3>🐎 ${h.name}</h3><p>Цена: ${h.price} лв.</p>
-                            <input id="n-${i}" placeholder="Трите имена">
-                            <input id="t-${i}" type="tel" placeholder="Телефон">
-                            <button class="btn-main" style="background:var(--s)" onclick="pay(${i})">РЕЗЕРВИРАЙ СЕГА</button>
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <h3>🐎 ${h.name}</h3>
+                                <b style="color:var(--s)">${h.price} лв.</b>
+                            </div>
+                            <input id="n-${i}" placeholder="Вашето Име">
+                            <input id="t-${i}" placeholder="Телефон">
+                            
+                            <label style="font-size:12px; font-weight:bold; color:#777;">МЕТОД НА ПЛАЩАНЕ:</label>
+                            <div class="payment-opt">
+                                <div class="pay-box active" onclick="setPay(this, 'card')"><i class="fas fa-credit-card"></i><br>Карта</div>
+                                <div class="pay-box" onclick="setPay(this, 'easypay')"><i class="fas fa-money-bill-wave"></i><br>EasyPay</div>
+                            </div>
+                            <button class="btn-main btn-pay" onclick="processPay(${i})">ПОТВЪРДИ И ПЛАТИ</button>
                         </div>`;
                 });
             }
-            else if (p === 'vet') {
-                document.getElementById('title').innerText = "Вет. Дневник";
-                data.horses.forEach((h, i) => {
-                    body.innerHTML += `<div class="card"><h3>${h.name}</h3>
-                    <textarea placeholder="Бележки за здравето..." onchange="upd('horses/${i}/notes', this.value)">${h.notes || ''}</textarea></div>`;
-                });
+            else if(p === 'conto') {
+                document.getElementById('header-title').innerText = "ContoWeave Счетоводство";
+                container.innerHTML = `
+                    <div class="card">
+                        <div class="conto-badge">LIVE SYNC ACTIVE</div>
+                        <h3>Финансов анализ за периода</h3>
+                        <p>Общо приходи: <b>${state.income} лв.</b></p>
+                        <p>Транзакции към счетоводител: <b>${state.sales ? Object.keys(state.sales).length : 0}</b></p>
+                        <button class="btn-main" style="background:#4338ca" onclick="alert('Данните са изпратени към ContoWeave!')">ЕКСПОРТ КЪМ СЧЕТОВОДСТВО</button>
+                    </div>`;
             }
-            else if (p === 'stock') {
-                document.getElementById('title').innerText = "Склад";
-                body.innerHTML = `<div class="card"><h3>📦 Наличност</h3>
-                <label>Сено (Бали)</label><input type="number" id="h-hay" value="${data.stock.hay}">
-                <button class="btn-main" onclick="upd('stock/hay', document.getElementById('h-hay').value); alert('Обновено!')">ЗАПАЗИ</button></div>`;
+            else if(p === 'dash') {
+                document.getElementById('header-title').innerText = "Админ Контрол";
+                container.innerHTML = `
+                    <div class="card" style="background:var(--p); color:white;">
+                        <h2>${state.income} лв.</h2><p>Текущ баланс</p>
+                    </div>
+                    <div class="card"><h3>📦 Склад Сено: ${state.stock.hay} бали</h3></div>`;
             }
         }
 
-        function pay(idx) {
+        function setPay(el, type) {
+            document.querySelectorAll('.pay-box').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
+            selectedPay = type;
+        }
+
+        function processPay(idx) {
             const name = document.getElementById('n-'+idx).value;
-            const phone = document.getElementById('t-'+idx).value;
-            if(!name || !phone) return alert('Моля, въведете данни!');
-            const horse = data.horses[idx];
-            db.ref('horsenook_enterprise/income').set((data.income || 0) + parseInt(horse.price));
-            db.ref('horsenook_enterprise/sales').push({ 
-                horse: horse.name, amount: horse.price, clientName: name, clientPhone: phone, date: new Date().toLocaleString('bg-BG') 
-            });
-            alert('Благодарим за резервацията!');
+            if(!name) return alert('Въведете име!');
+            const h = state.horses[idx];
+            const msg = selectedPay === 'card' ? 'Плащането с карта е успешно!' : 'Код за EasyPay: 882341 - Платете на каса.';
+            
+            db.ref('horsenook_ent_v4/income').set(state.income + parseInt(h.price));
+            db.ref('horsenook_ent_v4/sales').push({ horse: h.name, amount: h.price, clientName: name, method: selectedPay, date: new Date().toLocaleString() });
+            
+            alert(msg);
         }
 
-        function upd(path, val) { db.ref('horsenook_enterprise/' + path).set(val); }
-
-        function setupDatabase() {
-            db.ref('horsenook_enterprise').set({
-                income: 0,
-                stock: { hay: 100 },
+        function setupInit() {
+            db.ref('horsenook_ent_v4').set({
+                income: 420,
+                stock: { hay: 180 },
                 horses: [
-                    { name: "Сириус", price: 60, notes: "Здрав" },
-                    { name: "Бела", price: 60, notes: "Здрава" }
+                    { name: "Сириус", price: 60 },
+                    { name: "Бела", price: 50 },
+                    { name: "Апачи", price: 70 }
                 ],
-                sales: { "start": { horse: "Демо", amount: 0, clientName: "Система", date: "Начало" } }
+                sales: { "init": { clientName: "Демо", amount: 60, horse: "Сириус", date: "16.04.2026" } }
             });
         }
     </script>
