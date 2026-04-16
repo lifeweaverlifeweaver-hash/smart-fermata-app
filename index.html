@@ -3,59 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SmartFermata | Horsenook Enterprise Edition</title>
+    <title>Horsenook | Ultimate Management</title>
     <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-database-compat.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --p: #3d2b1f; --s: #8c7356; --bg: #f9f6f2; --accent: #d4a373; --white: #ffffff; --success: #27ae60; }
+        :root { --p: #3d2b1f; --s: #8c7356; --bg: #f9f6f2; --accent: #d4a373; --white: #ffffff; --green: #27ae60; }
         body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); color: #333; }
-        
         .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: var(--p); transition: 0.3s; z-index: 1000; padding-top: 50px; color: var(--white); }
         .sidebar.active { left: 0; }
         .nav-item { padding: 18px 25px; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; }
         .nav-item i { margin-right: 15px; width: 25px; color: var(--accent); }
-        
         .top-bar { background: var(--p); color: var(--white); padding: 15px; display: flex; align-items: center; position: sticky; top: 0; z-index: 900; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
         .card { background: var(--white); margin: 15px; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-left: 6px solid var(--s); }
-        
-        input, select { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
-        .btn-main { background: var(--p); color: var(--white); border: none; padding: 16px; border-radius: 8px; width: 100%; font-weight: bold; cursor: pointer; font-size: 16px; transition: 0.2s; }
-        .btn-pay { background: var(--success); margin-top: 15px; }
-        
-        .payment-opt { display: flex; gap: 10px; margin: 10px 0; }
-        .pay-box { flex: 1; padding: 10px; border: 2px solid #eee; border-radius: 8px; text-align: center; cursor: pointer; font-size: 12px; font-weight: bold; }
-        .pay-box.active { border-color: var(--s); background: #fdfaf5; }
-        
+        input, select, textarea { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
+        .btn-main { background: var(--p); color: var(--white); border: none; padding: 16px; border-radius: 8px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .btn-add { background: var(--green); margin-bottom: 20px; }
+        .badge { background: #eef2ff; color: #4338ca; padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: bold; border: 1px solid #c7d2fe; }
         #login-screen { position: fixed; inset: 0; background: var(--p); z-index: 5000; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--white); }
         .logo-box { width: 110px; height: 110px; border-radius: 50%; background: white; padding: 5px; margin-bottom: 20px; }
-        
-        .conto-badge { background: #eef2ff; color: #4338ca; padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: bold; border: 1px solid #c7d2fe; }
     </style>
 </head>
 <body>
 
     <div id="login-screen">
         <img src="https://lifeweaverlifeweaver-hash.github.io/smart-fermata-app/logo.png" class="logo-box">
-        <h2>HORSENOOK ENTERPRISE</h2>
-        <button class="btn-main" style="background:white; color:var(--p); width:80%; margin-bottom:15px;" onclick="start('admin')">АДМИН ПАНЕЛ</button>
-        <button class="btn-main" style="background:var(--s); width:80%;" onclick="start('client')">КЛИЕНТСКИ ПОРТАЛ</button>
+        <h2>HORSENOOK MANAGEMENT</h2>
+        <button class="btn-main" style="background:white; color:var(--p); width:80%; margin-bottom:15px;" onclick="start('admin')">ПАНЕЛ МЕНИДЖЪР</button>
+        <button class="btn-main" style="background:var(--s); width:80%;" onclick="start('client')">ПАНЕЛ КЛИЕНТИ</button>
     </div>
 
     <div class="sidebar" id="sidebar">
         <div id="adm-nav" style="display:none;">
-            <div class="nav-item" onclick="page('dash')"><i class="fas fa-chart-line"></i> Дашборд</div>
-            <div class="nav-item" onclick="page('conto')"><i class="fas fa-file-invoice-dollar"></i> ContoWeave Анализ</div>
-            <div class="nav-item" onclick="page('vet')"><i class="fas fa-vial"></i> Вет. Контрол</div>
+            <div class="nav-item" onclick="page('dash')"><i class="fas fa-home"></i> Табло</div>
+            <div class="nav-item" onclick="page('staff')"><i class="fas fa-user-clock"></i> График Персонал</div>
+            <div class="nav-item" onclick="page('manage_horses')"><i class="fas fa-plus-circle"></i> Добави/Редактирай Коне</div>
+            <div class="nav-item" onclick="page('conto')"><i class="fas fa-calculator"></i> ContoWeave Анализ</div>
         </div>
         <div id="cli-nav" style="display:none;">
-            <div class="nav-item" onclick="page('booking')"><i class="fas fa-horse"></i> Резервирай Езда</div>
+            <div class="nav-item" onclick="page('booking')"><i class="fas fa-calendar-alt"></i> Резервация</div>
         </div>
         <div class="nav-item" onclick="location.reload()" style="color:#ff7675; margin-top:30px;"><i class="fas fa-sign-out-alt"></i> Изход</div>
     </div>
 
     <div class="top-bar">
-        <i class="fas fa-bars" style="font-size:24px; margin-right:15px;" onclick="document.getElementById('sidebar').classList.toggle('active')"></i>
+        <i class="fas fa-bars" style="font-size:24px; margin-right:15px; cursor:pointer;" onclick="document.getElementById('sidebar').classList.toggle('active')"></i>
         <b id="header-title">Horsenook</b>
     </div>
 
@@ -70,15 +62,15 @@
         };
         firebase.initializeApp(config);
         const db = firebase.database();
-        let currentRole = ''; let state = null; let selectedPay = 'card';
+        let currentRole = ''; let state = null;
 
         function start(r) {
             currentRole = r;
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById(r === 'admin' ? 'adm-nav' : 'cli-nav').style.display = 'block';
-            db.ref('horsenook_ent_v4').on('value', (s) => {
+            db.ref('horsenook_master_v5').on('value', (s) => {
                 state = s.val();
-                if(!state) setupInit(); else page(r === 'admin' ? 'dash' : 'booking');
+                if(!state) setupMaster(); else page(r === 'admin' ? 'dash' : 'booking');
             });
         }
 
@@ -87,76 +79,82 @@
             document.getElementById('sidebar').classList.remove('active');
             container.innerHTML = '';
 
-            if(p === 'booking') {
-                document.getElementById('header-title').innerText = "Избери Кон за Езда";
-                state.horses.forEach((h, i) => {
-                    container.innerHTML += `
-                        <div class="card">
-                            <div style="display:flex; justify-content:space-between; align-items:center;">
-                                <h3>🐎 ${h.name}</h3>
-                                <b style="color:var(--s)">${h.price} лв.</b>
-                            </div>
-                            <input id="n-${i}" placeholder="Вашето Име">
-                            <input id="t-${i}" placeholder="Телефон">
-                            
-                            <label style="font-size:12px; font-weight:bold; color:#777;">МЕТОД НА ПЛАЩАНЕ:</label>
-                            <div class="payment-opt">
-                                <div class="pay-box active" onclick="setPay(this, 'card')"><i class="fas fa-credit-card"></i><br>Карта</div>
-                                <div class="pay-box" onclick="setPay(this, 'easypay')"><i class="fas fa-money-bill-wave"></i><br>EasyPay</div>
-                            </div>
-                            <button class="btn-main btn-pay" onclick="processPay(${i})">ПОТВЪРДИ И ПЛАТИ</button>
-                        </div>`;
+            if(p === 'dash') {
+                document.getElementById('header-title').innerText = "Табло Мениджър";
+                container.innerHTML = `
+                    <div class="card" style="background:var(--p); color:white; text-align:center;">
+                        <h2>${state.income} лв.</h2><p>Оборот днес</p>
+                    </div>
+                    <div class="card"><h3>📊 Статус</h3>
+                    <p>🐎 Коне в базата: <b>${state.horses ? Object.keys(state.horses).length : 0}</b></p>
+                    <p>👨‍🏫 Активни треньори: <b>${state.staff ? Object.keys(state.staff).length : 0}</b></p></div>`;
+            }
+            else if(p === 'staff') {
+                document.getElementById('header-title').innerText = "График Персонал";
+                container.innerHTML = `<div class="card"><h3>Добави треньор на смяна</h3>
+                <input id="st-name" placeholder="Име на треньор"><input id="st-pos" placeholder="Място (напр. Голям Манеж)">
+                <button class="btn-main btn-add" onclick="addStaff()">ЗАПИШИ В ГРАФИКА</button>
+                <div id="st-list"></div></div>`;
+                if(state.staff) Object.entries(state.staff).forEach(([id, s]) => {
+                    document.getElementById('st-list').innerHTML += `<div style="padding:10px; border-bottom:1px solid #eee;">👤 <b>${s.name}</b> - ${s.pos} <i class="fas fa-trash" style="float:right; color:red;" onclick="deleteItem('staff/${id}')"></i></div>`;
+                });
+            }
+            else if(p === 'manage_horses') {
+                document.getElementById('header-title').innerText = "Управление на коне";
+                container.innerHTML = `<div class="card"><h3>Нов кон в базата</h3>
+                <input id="h-name" placeholder="Име на коня"><input id="h-price" type="number" placeholder="Цена за час">
+                <button class="btn-main btn-add" onclick="addHorse()">ДОБАВИ В СИСТЕМАТА</button>
+                <div id="h-list"></div></div>`;
+                if(state.horses) Object.entries(state.horses).forEach(([id, h]) => {
+                    document.getElementById('h-list').innerHTML += `<div style="padding:10px; border-bottom:1px solid #eee;">🐎 <b>${h.name}</b> - ${h.price} лв. <i class="fas fa-trash" style="float:right; color:red;" onclick="deleteItem('horses/${id}')"></i></div>`;
+                });
+            }
+            else if(p === 'booking') {
+                document.getElementById('header-title').innerText = "Резервирай Езда";
+                if(state.horses) Object.values(state.horses).forEach((h, i) => {
+                    container.innerHTML += `<div class="card"><h3>🐎 ${h.name}</h3><p>Цена: ${h.price} лв.</p>
+                    <input id="cn-${i}" placeholder="Вашето име"><input id="ct-${i}" placeholder="Телефон">
+                    <label>Избери Треньор:</label><select id="cs-${i}">${Object.values(state.staff || {}).map(s => `<option>${s.name}</option>`)}</select>
+                    <button class="btn-main" style="background:var(--s)" onclick="book(${i}, '${h.name}', ${h.price})">ПЛАТИ И ЗАПАЗИ</button></div>`;
                 });
             }
             else if(p === 'conto') {
-                document.getElementById('header-title').innerText = "ContoWeave Счетоводство";
-                container.innerHTML = `
-                    <div class="card">
-                        <div class="conto-badge">LIVE SYNC ACTIVE</div>
-                        <h3>Финансов анализ за периода</h3>
-                        <p>Общо приходи: <b>${state.income} лв.</b></p>
-                        <p>Транзакции към счетоводител: <b>${state.sales ? Object.keys(state.sales).length : 0}</b></p>
-                        <button class="btn-main" style="background:#4338ca" onclick="alert('Данните са изпратени към ContoWeave!')">ЕКСПОРТ КЪМ СЧЕТОВОДСТВО</button>
-                    </div>`;
-            }
-            else if(p === 'dash') {
-                document.getElementById('header-title').innerText = "Админ Контрол";
-                container.innerHTML = `
-                    <div class="card" style="background:var(--p); color:white;">
-                        <h2>${state.income} лв.</h2><p>Текущ баланс</p>
-                    </div>
-                    <div class="card"><h3>📦 Склад Сено: ${state.stock.hay} бали</h3></div>`;
+                document.getElementById('header-title').innerText = "ContoWeave";
+                container.innerHTML = `<div class="card"><div class="badge">CONTO-SYNC</div><h3>Директен отчет</h3>
+                <p>Приходи за експорт: ${state.income} лв.</p>
+                <button class="btn-main" style="background:#4338ca" onclick="alert('Данните са изпратени към счетоводството!')">ИЗПРАТИ КЪМ СЧЕТОВОДИТЕЛ</button></div>`;
             }
         }
 
-        function setPay(el, type) {
-            document.querySelectorAll('.pay-box').forEach(b => b.classList.remove('active'));
-            el.classList.add('active');
-            selectedPay = type;
+        function addStaff() {
+            const name = document.getElementById('st-name').value;
+            const pos = document.getElementById('st-pos').value;
+            if(name) db.ref('horsenook_master_v5/staff').push({ name, pos });
         }
 
-        function processPay(idx) {
-            const name = document.getElementById('n-'+idx).value;
-            if(!name) return alert('Въведете име!');
-            const h = state.horses[idx];
-            const msg = selectedPay === 'card' ? 'Плащането с карта е успешно!' : 'Код за EasyPay: 882341 - Платете на каса.';
-            
-            db.ref('horsenook_ent_v4/income').set(state.income + parseInt(h.price));
-            db.ref('horsenook_ent_v4/sales').push({ horse: h.name, amount: h.price, clientName: name, method: selectedPay, date: new Date().toLocaleString() });
-            
-            alert(msg);
+        function addHorse() {
+            const name = document.getElementById('h-name').value;
+            const price = document.getElementById('h-price').value;
+            if(name && price) db.ref('horsenook_master_v5/horses').push({ name, price });
         }
 
-        function setupInit() {
-            db.ref('horsenook_ent_v4').set({
-                income: 420,
-                stock: { hay: 180 },
-                horses: [
-                    { name: "Сириус", price: 60 },
-                    { name: "Бела", price: 50 },
-                    { name: "Апачи", price: 70 }
-                ],
-                sales: { "init": { clientName: "Демо", amount: 60, horse: "Сириус", date: "16.04.2026" } }
+        function book(idx, hName, price) {
+            const cName = document.getElementById('cn-'+idx).value;
+            const coach = document.getElementById('cs-'+idx).value;
+            if(!cName) return alert('Въведете име!');
+            db.ref('horsenook_master_v5/income').set(state.income + parseInt(price));
+            db.ref('horsenook_master_v5/sales').push({ client: cName, horse: hName, coach: coach, amount: price, date: new Date().toLocaleString() });
+            alert('Успешна резервация при треньор ' + coach);
+        }
+
+        function deleteItem(path) { if(confirm('Изтриване?')) db.ref('horsenook_master_v5/' + path).remove(); }
+
+        function setupMaster() {
+            db.ref('horsenook_master_v5').set({
+                income: 550,
+                staff: { "s1": { name: "Христо", pos: "Манеж 1" }, "s2": { name: "Надя", pos: "Терапевтичен център" } },
+                horses: { "h1": { name: "Сириус", price: 60 }, "h2": { name: "Бела", price: 50 } },
+                stock: { hay: 100 }
             });
         }
     </script>
