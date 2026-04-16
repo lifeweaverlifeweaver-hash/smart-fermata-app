@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Horsenook | Financial & Client Hub</title>
+    <title>Horsenook | Ultimate ERP v7</title>
     <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-database-compat.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --p: #3d2b1f; --s: #8c7356; --bg: #f9f6f2; --accent: #d4a373; --white: #ffffff; --success: #27ae60; --viber: #7360f2; --stripe: #6772e5; }
+        :root { --p: #3d2b1f; --s: #8c7356; --bg: #f9f6f2; --accent: #d4a373; --white: #ffffff; --red: #e74c3c; --green: #27ae60; --viber: #7360f2; }
         body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); color: #333; }
         .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: var(--p); transition: 0.3s; z-index: 1000; padding-top: 50px; color: var(--white); }
         .sidebar.active { left: 0; }
@@ -16,37 +16,36 @@
         .top-bar { background: var(--p); color: var(--white); padding: 15px; display: flex; align-items: center; position: sticky; top: 0; z-index: 900; }
         .card { background: var(--white); margin: 12px; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-left: 6px solid var(--s); }
         .btn-main { background: var(--p); color: var(--white); border: none; padding: 16px; border-radius: 8px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        
-        /* Payment Grid */
         .pay-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 15px 0; }
-        .pay-btn { padding: 12px; border: 2px solid #eee; border-radius: 8px; text-align: center; cursor: pointer; font-size: 13px; font-weight: bold; transition: 0.2s; }
+        .pay-btn { padding: 12px; border: 2px solid #eee; border-radius: 8px; text-align: center; cursor: pointer; font-size: 13px; font-weight: bold; }
         .pay-btn.active { border-color: var(--s); background: #fdfaf5; }
-        .pay-btn i { font-size: 18px; margin-bottom: 5px; display: block; }
-        
-        .client-card { background: #fff; padding: 15px; border-radius: 10px; margin-bottom: 12px; border: 1px solid #ddd; position: relative; }
-        .client-info { font-size: 14px; margin: 5px 0; }
-        .phone-btn { display: inline-block; color: #2980b9; text-decoration: none; font-weight: bold; }
+        .check-in-box { background: #edf2f7; padding: 15px; border-radius: 10px; text-align: center; margin-bottom: 10px; }
+        .storno-btn { color: var(--red); font-size: 12px; cursor: pointer; margin-top: 5px; display: block; }
         #login-screen { position: fixed; inset: 0; background: var(--p); z-index: 5000; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--white); }
+        .badge-vouch { background: #fef3c7; color: #92400e; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; }
     </style>
 </head>
 <body>
 
     <div id="login-screen">
         <img src="https://lifeweaverlifeweaver-hash.github.io/smart-fermata-app/logo.png" style="width:100px; border-radius:50%; background:white; padding:5px; margin-bottom:20px;">
-        <h2>HORSENOOK ERP</h2>
-        <button class="btn-main" style="background:white; color:var(--p); width:80%; margin-bottom:15px;" onclick="init('admin')">АДМИН / СЧЕТОВОДСТВО</button>
+        <h2>HORSENOOK ERP v7</h2>
+        <button class="btn-main" style="background:white; color:var(--p); width:80%; margin-bottom:15px;" onclick="init('admin')">МЕНИДЖЪР ПАНЕЛ</button>
         <button class="btn-main" style="background:var(--s); width:80%;" onclick="init('client')">КЛИЕНТСКИ ПАНЕЛ</button>
     </div>
 
     <div class="sidebar" id="sidebar">
         <div id="adm-nav" style="display:none;">
-            <div class="nav-item" onclick="page('dash')"><i class="fas fa-chart-line"></i> Дневен отчет</div>
-            <div class="nav-item" onclick="page('conto')"><i class="fas fa-file-contract"></i> ContoWeave Анализ</div>
+            <div class="nav-item" onclick="page('dash')"><i class="fas fa-home"></i> Табло & Сторно</div>
+            <div class="nav-item" onclick="page('staff')"><i class="fas fa-user-clock"></i> График & Чекиране</div>
+            <div class="nav-item" onclick="page('vet_stock')"><i class="fas fa-hand-holding-medical"></i> Склад & Ветеринари</div>
+            <div class="nav-item" onclick="page('vouchers')"><i class="fas fa-ticket-alt"></i> Ваучери & Програма</div>
+            <div class="nav-item" onclick="page('reports')"><i class="fas fa-file-invoice-dollar"></i> Z-Отчет / Счетоводство</div>
         </div>
         <div id="cli-nav" style="display:none;">
-            <div class="nav-item" onclick="page('booking')"><i class="fas fa-horse"></i> Резервация</div>
+            <div class="nav-item" onclick="page('booking')"><i class="fas fa-calendar-check"></i> Резервация</div>
         </div>
-        <div class="nav-item" onclick="location.reload()" style="color:#ff7675;"><i class="fas fa-power-off"></i> Изход</div>
+        <div class="nav-item" onclick="location.reload()" style="color:#ff7675; margin-top:20px;"><i class="fas fa-sign-out-alt"></i> Изход</div>
     </div>
 
     <div class="top-bar">
@@ -54,7 +53,7 @@
         <b id="h-title">Horsenook</b>
     </div>
 
-    <div id="app-content"></div>
+    <div id="app-body"></div>
 
     <script>
         const config = {
@@ -65,103 +64,116 @@
         };
         firebase.initializeApp(config);
         const db = firebase.database();
-        let userRole = ''; let appState = null; let selectedMethod = 'card';
+        let role = ''; let state = null; let payM = 'Card';
 
         function init(r) {
-            userRole = r;
+            role = r;
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById(r === 'admin' ? 'adm-nav' : 'cli-nav').style.display = 'block';
-            db.ref('horsenook_pro_v6').on('value', (s) => {
-                appState = s.val();
-                if(!appState) setupDB(); else page(r === 'admin' ? 'dash' : 'booking');
+            db.ref('horsenook_ultimate_v7').on('value', (s) => {
+                state = s.val();
+                if(!state) setupInit(); else page(r === 'admin' ? 'dash' : 'booking');
             });
         }
 
         function page(p) {
-            const container = document.getElementById('app-content');
+            const body = document.getElementById('app-body');
             document.getElementById('sidebar').classList.remove('active');
-            container.innerHTML = '';
+            body.innerHTML = '';
 
             if(p === 'dash') {
-                document.getElementById('h-title').innerText = "Дневен Дневник";
-                container.innerHTML = `
-                    <div class="card" style="background:var(--p); color:white; text-align:center;">
-                        <h2>${appState.income} лв.</h2><p>Общ оборот в базата</p>
-                    </div>
-                    <div class="card"><h3>📑 Списък тренировки:</h3><div id="client-list"></div></div>`;
-                
-                if(appState.sales) {
-                    Object.entries(appState.sales).reverse().forEach(([id, s]) => {
-                        document.getElementById('client-list').innerHTML += `
-                        <div class="client-card">
-                            <b>${s.client}</b> <span style="float:right; font-size:12px; color:var(--s)">${s.method}</span><br>
-                            <a href="tel:${s.phone}" class="phone-btn"><i class="fas fa-phone"></i> ${s.phone}</a>
-                            <div class="client-info">🐎 Кон: ${s.horse} | 👨‍🏫 Треньор: ${s.coach}</div>
-                            <div style="font-size:10px; color:#999;">${s.date}</div>
-                        </div>`;
-                    });
-                }
-            }
-            else if(p === 'booking') {
-                document.getElementById('h-title').innerText = "Нова Резервация";
-                Object.values(appState.horses || {}).forEach((h, i) => {
-                    container.innerHTML += `
-                    <div class="card">
-                        <h3>🐎 ${h.name} - ${h.price} лв.</h3>
-                        <input id="cn-${i}" placeholder="Трите Ви имена">
-                        <input id="ct-${i}" type="tel" placeholder="Телефон">
-                        <select id="cc-${i}">${Object.values(appState.staff || {}).map(s => `<option>${s.name}</option>`)}</select>
-                        <div class="pay-grid">
-                            <div class="pay-btn active" onclick="setM(this, 'Stripe/Card')"><i class="fab fa-stripe" style="color:var(--stripe)"></i>Карта</div>
-                            <div class="pay-btn" onclick="setM(this, 'PayPal')"><i class="fab fa-paypal" style="color:#003087"></i>PayPal</div>
-                            <div class="pay-btn" onclick="setM(this, 'ViberPay')"><i class="fab fa-viber" style="color:var(--viber)"></i>ViberPay</div>
-                            <div class="pay-btn" onclick="setM(this, 'EasyPay')"><i class="fas fa-money-bill-wave"></i>EasyPay</div>
-                        </div>
-                        <button class="btn-main" onclick="confirmBooking(${i}, '${h.name}', ${h.price})">ПЛАТИ И ЗАПАЗИ</button>
+                document.getElementById('h-title').innerText = "Дневни продажби";
+                body.innerHTML = `<div class="card"><h3>💰 Оборот: ${state.income} лв.</h3><div id="sales-list"></div></div>`;
+                if(state.sales) Object.entries(state.sales).reverse().forEach(([id, s]) => {
+                    body.querySelector('#sales-list').innerHTML += `
+                    <div style="border-bottom:1px solid #eee; padding:10px 0;">
+                        <b>${s.client}</b> (${s.amount}лв. - ${s.method})<br>
+                        <small>${s.date}</small>
+                        <span class="storno-btn" onclick="storno('${id}', ${s.amount})">⚠️ Сторно (Анулирай)</span>
                     </div>`;
                 });
             }
-            else if(p === 'conto') {
-                document.getElementById('h-title').innerText = "ContoWeave Счетоводство";
-                container.innerHTML = `
-                <div class="card"><h3>📊 Пълен Анализ</h3>
-                <p>Предходни данни: <b>550 лв.</b></p>
-                <p>Нови приходи: <b>${appState.income - 550} лв.</b></p>
-                <hr>
-                <p><b>ОБЩО ЗА ЕКСПОРТ: ${appState.income} лв.</b></p>
-                <button class="btn-main" style="background:#4338ca" onclick="alert('Данните са изпратени към счетоводителите!')">ЕКСПОРТ КЪМ CONTOWEAVE</button>
-                </div>`;
+            else if(p === 'staff') {
+                document.getElementById('h-title').innerText = "Контрол на персонала";
+                body.innerHTML = `
+                <div class="card"><h3>👨‍🌾 Чекиране в базата</h3>
+                <input id="staff-name" placeholder="Вашето име">
+                <div style="display:flex; gap:10px;">
+                    <button class="btn-main" style="background:var(--green)" onclick="checkIn('Влизане')">ВЛИЗАНЕ</button>
+                    <button class="btn-main" style="background:var(--red)" onclick="checkIn('Излизане')">ИЗЛИЗАНЕ</button>
+                </div>
+                <div id="log-list" style="margin-top:15px; font-size:12px;"></div></div>`;
+                if(state.logs) Object.values(state.logs).reverse().forEach(l => {
+                    body.querySelector('#log-list').innerHTML += `<div>[${l.time}] ${l.name}: ${l.action}</div>`;
+                });
+            }
+            else if(p === 'vet_stock') {
+                document.getElementById('h-title').innerText = "Склад & Здраве";
+                body.innerHTML = `
+                <div class="card"><h3>📦 Склад</h3><p>Сено: ${state.stock.hay} бали</p><p>Овес: ${state.stock.oats} кг</p></div>
+                <div class="card"><h3>🩺 Ветеринари</h3>
+                <p>Д-р Георгиев: <a href="tel:0888111222">0888111222</a></p>
+                <p>Д-р Маринова: <a href="tel:0888333444">0888333444</a></p>
+                <hr><b>Хранене:</b> 07:00 (Сено), 13:00 (Овес), 19:00 (Сено)</div>`;
+            }
+            else if(p === 'vouchers') {
+                document.getElementById('h-title').innerText = "Ваучери & Програма";
+                body.innerHTML = `
+                <div class="card"><h3>🎟️ Създай Ваучер</h3>
+                <input id="v-name" placeholder="Име на ваучера (напр. Свободен Понеделник)">
+                <input id="v-disc" type="number" placeholder="Отстъпка в лв.">
+                <button class="btn-main" onclick="addVoucher()">ПУСНИ ВАУЧЕР</button></div>`;
+            }
+            else if(p === 'booking') {
+                document.getElementById('h-title').innerText = "Резервация";
+                Object.values(state.horses || {}).forEach((h, i) => {
+                    body.innerHTML += `
+                    <div class="card">
+                        <h3>🐎 ${h.name} - ${h.price} лв.</h3>
+                        <input id="cn-${i}" placeholder="Име и Фамилия"><input id="ct-${i}" placeholder="Телефон">
+                        <div class="pay-grid">
+                            <div class="pay-btn active" onclick="setPay(this, 'Card')">Карта</div>
+                            <div class="pay-btn" onclick="setPay(this, 'Stripe')">Stripe</div>
+                            <div class="pay-btn" onclick="setPay(this, 'ViberPay')">ViberPay</div>
+                            <div class="pay-btn" onclick="setPay(this, 'EasyPay')">EasyPay</div>
+                        </div>
+                        <button class="btn-main" onclick="book(${i}, '${h.name}', ${h.price})">ПЛАТИ</button>
+                    </div>`;
+                });
             }
         }
 
-        function setM(el, m) {
-            document.querySelectorAll('.pay-btn').forEach(b => b.classList.remove('active'));
-            el.classList.add('active');
-            selectedMethod = m;
-        }
-
-        function confirmBooking(idx, hName, price) {
+        function setPay(el, m) { document.querySelectorAll('.pay-btn').forEach(b => b.classList.remove('active')); el.classList.add('active'); payM = m; }
+        
+        function book(idx, h, p) {
             const name = document.getElementById('cn-'+idx).value;
             const phone = document.getElementById('ct-'+idx).value;
-            const coach = document.getElementById('cc-'+idx).value;
-            if(!name || !phone) return alert('Моля, въведете данни!');
-            
-            db.ref('horsenook_pro_v6/income').set(appState.income + parseInt(price));
-            db.ref('horsenook_pro_v6/sales').push({
-                client: name, phone: phone, horse: hName, coach: coach, amount: price, method: selectedMethod, date: new Date().toLocaleString()
-            });
-            alert('Резервацията е платена успешно чрез ' + selectedMethod);
+            if(!name) return alert('Име?');
+            db.ref('horsenook_ultimate_v7/income').set(state.income + parseInt(p));
+            db.ref('horsenook_ultimate_v7/sales').push({ client: name, phone: phone, horse: h, amount: p, method: payM, date: new Date().toLocaleString() });
+            alert('Плащането прието!');
         }
 
-        function setupDB() {
-            db.ref('horsenook_pro_v6').set({
-                income: 550, // ПРЕДХОДНИ ДАННИ
-                staff: { "1": {name: "Христо"}, "2": {name: "Надя"} },
+        function checkIn(act) {
+            const name = document.getElementById('staff-name').value;
+            if(!name) return alert('Име на работник?');
+            db.ref('horsenook_ultimate_v7/logs').push({ name, action: act, time: new Date().toLocaleString() });
+            alert(act + ' успешно!');
+        }
+
+        function storno(id, amt) {
+            if(confirm('Анулиране на плащането?')) {
+                db.ref('horsenook_ultimate_v7/income').set(state.income - amt);
+                db.ref('horsenook_ultimate_v7/sales/' + id).remove();
+            }
+        }
+
+        function setupInit() {
+            db.ref('horsenook_ultimate_v7').set({
+                income: 550,
+                stock: { hay: 200, oats: 150 },
                 horses: { "1": {name: "Сириус", price: 60}, "2": {name: "Бела", price: 60} },
-                sales: { 
-                    "old1": {client: "Иван Иванов", phone: "0887111222", horse: "Сириус", coach: "Христо", amount: 60, method: "Карта", date: "10.04.2026"},
-                    "old2": {client: "Мария Петрова", phone: "0889333444", horse: "Бела", coach: "Надя", amount: 60, method: "EasyPay", date: "12.04.2026"}
-                }
+                staff: { "1": {name: "Христо"}, "2": {name: "Надя"} }
             });
         }
     </script>
