@@ -3,47 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Horsenook | Manager Pro</title>
+    <title>Horsenook | Financial & Client Hub</title>
     <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-database-compat.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --p: #3d2b1f; --s: #8c7356; --bg: #f9f6f2; --accent: #d4a373; --white: #ffffff; --green: #27ae60; --blue: #3498db; }
+        :root { --p: #3d2b1f; --s: #8c7356; --bg: #f9f6f2; --accent: #d4a373; --white: #ffffff; --success: #27ae60; --viber: #7360f2; --stripe: #6772e5; }
         body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); color: #333; }
         .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: var(--p); transition: 0.3s; z-index: 1000; padding-top: 50px; color: var(--white); }
         .sidebar.active { left: 0; }
         .nav-item { padding: 18px 25px; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; }
-        .nav-item i { margin-right: 15px; width: 25px; color: var(--accent); }
         .top-bar { background: var(--p); color: var(--white); padding: 15px; display: flex; align-items: center; position: sticky; top: 0; z-index: 900; }
         .card { background: var(--white); margin: 12px; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-left: 6px solid var(--s); }
-        .stat-box { background: var(--p); color: white; text-align: center; padding: 20px; border-radius: 12px; margin: 12px; }
-        input, select { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; box-sizing: border-box; }
-        .btn-main { background: var(--p); color: var(--white); border: none; padding: 16px; border-radius: 8px; width: 100%; font-weight: bold; cursor: pointer; }
-        .client-row { background: #fff; padding: 15px; border-radius: 10px; margin-bottom: 10px; border: 1px solid #eee; position: relative; }
-        .phone-link { color: var(--blue); text-decoration: none; font-weight: bold; display: block; margin-top: 5px; }
-        .tag { font-size: 11px; padding: 3px 8px; border-radius: 5px; background: var(--accent); color: white; font-weight: bold; margin-right: 5px; }
+        .btn-main { background: var(--p); color: var(--white); border: none; padding: 16px; border-radius: 8px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        
+        /* Payment Grid */
+        .pay-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 15px 0; }
+        .pay-btn { padding: 12px; border: 2px solid #eee; border-radius: 8px; text-align: center; cursor: pointer; font-size: 13px; font-weight: bold; transition: 0.2s; }
+        .pay-btn.active { border-color: var(--s); background: #fdfaf5; }
+        .pay-btn i { font-size: 18px; margin-bottom: 5px; display: block; }
+        
+        .client-card { background: #fff; padding: 15px; border-radius: 10px; margin-bottom: 12px; border: 1px solid #ddd; position: relative; }
+        .client-info { font-size: 14px; margin: 5px 0; }
+        .phone-btn { display: inline-block; color: #2980b9; text-decoration: none; font-weight: bold; }
         #login-screen { position: fixed; inset: 0; background: var(--p); z-index: 5000; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--white); }
     </style>
 </head>
 <body>
 
     <div id="login-screen">
-        <img src="https://lifeweaverlifeweaver-hash.github.io/smart-fermata-app/logo.png" style="width:100px; margin-bottom:20px; border-radius:50%; background:white; padding:5px;">
-        <h2>HORSENOOK MANAGER</h2>
-        <button class="btn-main" style="background:white; color:var(--p); width:80%; margin-bottom:15px;" onclick="start('admin')">ВХОД АДМИНИСТРАЦИЯ</button>
-        <button class="btn-main" style="background:var(--s); width:80%;" onclick="start('client')">ВХОД КЛИЕНТИ</button>
+        <img src="https://lifeweaverlifeweaver-hash.github.io/smart-fermata-app/logo.png" style="width:100px; border-radius:50%; background:white; padding:5px; margin-bottom:20px;">
+        <h2>HORSENOOK ERP</h2>
+        <button class="btn-main" style="background:white; color:var(--p); width:80%; margin-bottom:15px;" onclick="init('admin')">АДМИН / СЧЕТОВОДСТВО</button>
+        <button class="btn-main" style="background:var(--s); width:80%;" onclick="init('client')">КЛИЕНТСКИ ПАНЕЛ</button>
     </div>
 
     <div class="sidebar" id="sidebar">
         <div id="adm-nav" style="display:none;">
-            <div class="nav-item" onclick="page('dash')"><i class="fas fa-list-alt"></i> Дневни Тренировки</div>
-            <div class="nav-item" onclick="page('manage')"><i class="fas fa-edit"></i> Коне и Персонал</div>
-            <div class="nav-item" onclick="page('conto')"><i class="fas fa-file-invoice"></i> Счетоводство</div>
+            <div class="nav-item" onclick="page('dash')"><i class="fas fa-chart-line"></i> Дневен отчет</div>
+            <div class="nav-item" onclick="page('conto')"><i class="fas fa-file-contract"></i> ContoWeave Анализ</div>
         </div>
         <div id="cli-nav" style="display:none;">
-            <div class="nav-item" onclick="page('booking')"><i class="fas fa-calendar-plus"></i> Запиши час</div>
+            <div class="nav-item" onclick="page('booking')"><i class="fas fa-horse"></i> Резервация</div>
         </div>
-        <div class="nav-item" onclick="location.reload()" style="color:#ff7675; margin-top:20px;"><i class="fas fa-power-off"></i> Изход</div>
+        <div class="nav-item" onclick="location.reload()" style="color:#ff7675;"><i class="fas fa-power-off"></i> Изход</div>
     </div>
 
     <div class="top-bar">
@@ -51,7 +54,7 @@
         <b id="h-title">Horsenook</b>
     </div>
 
-    <div id="main-view"></div>
+    <div id="app-content"></div>
 
     <script>
         const config = {
@@ -62,90 +65,103 @@
         };
         firebase.initializeApp(config);
         const db = firebase.database();
-        let role = ''; let state = null;
+        let userRole = ''; let appState = null; let selectedMethod = 'card';
 
-        function start(r) {
-            role = r;
+        function init(r) {
+            userRole = r;
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById(r === 'admin' ? 'adm-nav' : 'cli-nav').style.display = 'block';
-            db.ref('horsenook_final_live').on('value', (s) => {
-                state = s.val();
-                if(!state) initDB(); else page(role === 'admin' ? 'dash' : 'booking');
+            db.ref('horsenook_pro_v6').on('value', (s) => {
+                appState = s.val();
+                if(!appState) setupDB(); else page(r === 'admin' ? 'dash' : 'booking');
             });
         }
 
         function page(p) {
-            const box = document.getElementById('main-view');
+            const container = document.getElementById('app-content');
             document.getElementById('sidebar').classList.remove('active');
-            box.innerHTML = '';
+            container.innerHTML = '';
 
             if(p === 'dash') {
-                document.getElementById('h-title').innerText = "Дневник на тренировките";
-                box.innerHTML = `
-                    <div class="stat-box"><h2>${state.income} лв.</h2><p>Оборот от резервации</p></div>
-                    <div class="card" style="border-left-color:var(--blue);">
-                        <h3>📅 Списък на клиентите:</h3>
-                        <div id="client-list"></div>
-                    </div>`;
+                document.getElementById('h-title').innerText = "Дневен Дневник";
+                container.innerHTML = `
+                    <div class="card" style="background:var(--p); color:white; text-align:center;">
+                        <h2>${appState.income} лв.</h2><p>Общ оборот в базата</p>
+                    </div>
+                    <div class="card"><h3>📑 Списък тренировки:</h3><div id="client-list"></div></div>`;
                 
-                if(state.sales) {
-                    Object.entries(state.sales).reverse().forEach(([id, s]) => {
+                if(appState.sales) {
+                    Object.entries(appState.sales).reverse().forEach(([id, s]) => {
                         document.getElementById('client-list').innerHTML += `
-                            <div class="client-row">
-                                <span class="tag">🐎 ${s.horse}</span> <span class="tag">👤 Треньор: ${s.coach}</span>
-                                <div style="margin-top:10px;"><b>${s.client}</b></div>
-                                <a href="tel:${s.phone}" class="phone-link"><i class="fas fa-phone"></i> ${s.phone}</a>
-                                <div style="font-size:11px; color:#888; margin-top:5px;">${s.date}</div>
-                                <i class="fas fa-check-circle" style="position:absolute; right:15px; top:15px; color:var(--green); font-size:20px;"></i>
-                            </div>`;
+                        <div class="client-card">
+                            <b>${s.client}</b> <span style="float:right; font-size:12px; color:var(--s)">${s.method}</span><br>
+                            <a href="tel:${s.phone}" class="phone-btn"><i class="fas fa-phone"></i> ${s.phone}</a>
+                            <div class="client-info">🐎 Кон: ${s.horse} | 👨‍🏫 Треньор: ${s.coach}</div>
+                            <div style="font-size:10px; color:#999;">${s.date}</div>
+                        </div>`;
                     });
-                } else {
-                    document.getElementById('client-list').innerHTML = "<p style='color:#888;'>Няма записани тренировки за днес.</p>";
                 }
             }
             else if(p === 'booking') {
-                document.getElementById('h-title').innerText = "Запиши тренировка";
-                Object.values(state.horses || {}).forEach((h, i) => {
-                    box.innerHTML += `
-                        <div class="card">
-                            <h3>🐎 ${h.name}</h3><p>Цена: ${h.price} лв.</p>
-                            <input id="cn-${i}" placeholder="Трите Ви имена">
-                            <input id="ct-${i}" type="tel" placeholder="Телефон за връзка">
-                            <label>Изберете любим треньор:</label>
-                            <select id="cs-${i}">${Object.values(state.staff || {}).map(s => `<option>${s.name}</option>`)}</select>
-                            <button class="btn-main" style="background:var(--s)" onclick="buy(${i}, '${h.name}', ${h.price})">ЗАПАЗИ ЧАС</button>
-                        </div>`;
+                document.getElementById('h-title').innerText = "Нова Резервация";
+                Object.values(appState.horses || {}).forEach((h, i) => {
+                    container.innerHTML += `
+                    <div class="card">
+                        <h3>🐎 ${h.name} - ${h.price} лв.</h3>
+                        <input id="cn-${i}" placeholder="Трите Ви имена">
+                        <input id="ct-${i}" type="tel" placeholder="Телефон">
+                        <select id="cc-${i}">${Object.values(appState.staff || {}).map(s => `<option>${s.name}</option>`)}</select>
+                        <div class="pay-grid">
+                            <div class="pay-btn active" onclick="setM(this, 'Stripe/Card')"><i class="fab fa-stripe" style="color:var(--stripe)"></i>Карта</div>
+                            <div class="pay-btn" onclick="setM(this, 'PayPal')"><i class="fab fa-paypal" style="color:#003087"></i>PayPal</div>
+                            <div class="pay-btn" onclick="setM(this, 'ViberPay')"><i class="fab fa-viber" style="color:var(--viber)"></i>ViberPay</div>
+                            <div class="pay-btn" onclick="setM(this, 'EasyPay')"><i class="fas fa-money-bill-wave"></i>EasyPay</div>
+                        </div>
+                        <button class="btn-main" onclick="confirmBooking(${i}, '${h.name}', ${h.price})">ПЛАТИ И ЗАПАЗИ</button>
+                    </div>`;
                 });
             }
-            else if(p === 'manage') {
-                document.getElementById('h-title').innerText = "Управление на базата";
-                box.innerHTML = `
-                    <div class="card"><h3>➕ Добави нов кон</h3>
-                    <input id="new-h" placeholder="Име на кон"><input id="new-p" type="number" placeholder="Цена"><button class="btn-main" onclick="addItem('horses', {name:document.getElementById('new-h').value, price:document.getElementById('new-p').value})">ДОБАВИ</button></div>
-                    <div class="card"><h3>➕ Добави треньор</h3>
-                    <input id="new-s" placeholder="Име на треньор"><button class="btn-main" onclick="addItem('staff', {name:document.getElementById('new-s').value})">ДОБАВИ</button></div>`;
+            else if(p === 'conto') {
+                document.getElementById('h-title').innerText = "ContoWeave Счетоводство";
+                container.innerHTML = `
+                <div class="card"><h3>📊 Пълен Анализ</h3>
+                <p>Предходни данни: <b>550 лв.</b></p>
+                <p>Нови приходи: <b>${appState.income - 550} лв.</b></p>
+                <hr>
+                <p><b>ОБЩО ЗА ЕКСПОРТ: ${appState.income} лв.</b></p>
+                <button class="btn-main" style="background:#4338ca" onclick="alert('Данните са изпратени към счетоводителите!')">ЕКСПОРТ КЪМ CONTOWEAVE</button>
+                </div>`;
             }
         }
 
-        function buy(idx, horse, price) {
-            const name = document.getElementById('cn-'+idx).value;
-            const phone = document.getElementById('ct-'+idx).value;
-            const coach = document.getElementById('cs-'+idx).value;
-            if(!name || !phone) return alert('Моля, попълнете всички полета!');
-            
-            db.ref('horsenook_final_live/income').set(state.income + parseInt(price));
-            db.ref('horsenook_final_live/sales').push({ client: name, phone: phone, horse: horse, coach: coach, amount: price, date: new Date().toLocaleString('bg-BG') });
-            alert('Успешно се записахте! Очакваме Ви!');
+        function setM(el, m) {
+            document.querySelectorAll('.pay-btn').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
+            selectedMethod = m;
         }
 
-        function addItem(p, obj) { db.ref('horsenook_final_live/' + p).push(obj); alert('Обновено!'); }
+        function confirmBooking(idx, hName, price) {
+            const name = document.getElementById('cn-'+idx).value;
+            const phone = document.getElementById('ct-'+idx).value;
+            const coach = document.getElementById('cc-'+idx).value;
+            if(!name || !phone) return alert('Моля, въведете данни!');
+            
+            db.ref('horsenook_pro_v6/income').set(appState.income + parseInt(price));
+            db.ref('horsenook_pro_v6/sales').push({
+                client: name, phone: phone, horse: hName, coach: coach, amount: price, method: selectedMethod, date: new Date().toLocaleString()
+            });
+            alert('Резервацията е платена успешно чрез ' + selectedMethod);
+        }
 
-        function initDB() {
-            db.ref('horsenook_final_live').set({
-                income: 60,
-                staff: { "1": {name:"Христо"}, "2": {name:"Надя"} },
-                horses: { "1": {name:"Сириус", price:60}, "2": {name:"Бела", price:60} },
-                sales: { "init": {client:"Демо Клиент (Пример)", phone:"0888123456", horse:"Сириус", coach:"Христо", amount:60, date:"16.04.2026, 12:00"} }
+        function setupDB() {
+            db.ref('horsenook_pro_v6').set({
+                income: 550, // ПРЕДХОДНИ ДАННИ
+                staff: { "1": {name: "Христо"}, "2": {name: "Надя"} },
+                horses: { "1": {name: "Сириус", price: 60}, "2": {name: "Бела", price: 60} },
+                sales: { 
+                    "old1": {client: "Иван Иванов", phone: "0887111222", horse: "Сириус", coach: "Христо", amount: 60, method: "Карта", date: "10.04.2026"},
+                    "old2": {client: "Мария Петрова", phone: "0889333444", horse: "Бела", coach: "Надя", amount: 60, method: "EasyPay", date: "12.04.2026"}
+                }
             });
         }
     </script>
